@@ -1,0 +1,8 @@
+<div class="textEditor">
+    <ngx-codemirror
+        [options]="codeMirrorOptions"
+        [(ngModel)]="content"        
+    >
+    </ngx-codemirror>
+    <button (click)="onCompile()">Compile</button>
+</div>
