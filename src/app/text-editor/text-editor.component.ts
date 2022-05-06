@@ -49,6 +49,8 @@ Int getMax(Int n1, Int n2):
   } */
 
   onCompile(){    
-    console.log(ast(this.content));
+    let tree = ast(this.content);
+    console.log(tree.constructor.name);
+    console.log(tree);
   }
 }

@@ -1,4 +1,4 @@
-abstract class Node {
+export abstract class Node {
   loc: any;
   constructor(loc: any) {
     this.loc = loc;
@@ -23,6 +23,7 @@ export class Project extends Node{
 
 export class Program extends Node {
   body: Node[];
+  incerteza:number = 0.5;
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
