@@ -214,7 +214,7 @@ incert_opt
 
 incert
     : Incerteza NUMBER new_line_opt    
-    {$$ = new yy.Incerteza(@$, $2)}
+    {$$ = new yy.Incerteza(@$, Number($2))}
     ;
 
 new_line_opt        
@@ -251,7 +251,7 @@ global_stmt
 variable_declarators
     : type variable_list_declarators
     {
-        $$ = new yy.VariableDeclaration(@$, $1, $2);
+        $$ = new yy.VariableDeclaration(@$, $2, $1);
     }
     ;
 
@@ -292,7 +292,7 @@ type
     | 'Boolean'
     {$$ = yy.Type.Boolean}
     | 'String'
-    {$$ = yy.Type.Double}
+    {$$ = yy.Type.String}
     | 'Int'
     {$$ = yy.Type.Int}
     | 'Char'
@@ -337,192 +337,318 @@ param
     ;
 
 block
-    : NEWLINE INDENT body_block_opt DEDENT    
+    : NEWLINE INDENT body_block_opt DEDENT
+    {$$ = $3}    
     ;
 
 body_block_opt
     :     
+    {$$ = []}
     | body_block
+    {$$ = $1}
     ;
 
 body_block
     : body_stmt
+    {$$ = [$1]}
     | body_block body_stmt
+    {
+        $1.push($2);
+        $$ = $1;
+    }
     ;
 
 body_stmt
     : variable_declarators new_line_opt
+    {$$ = $1}
     | variable_assignment new_line_opt
+    {$$ = $1}
     | function_call_stmt new_line_opt
+    {$$ = $1}
     | if_stmt
+    {$$ = $1}
     | for_stmt
+    {$$ = $1}
     | while_stmt
+    {$$ = $1}
     | drawAST_stmt new_line_opt
+    {$$ = $1}
     | drawEXP_stmt new_line_opt
+    {$$ = $1}
     | drawTS_stmt new_line_opt
+    {$$ = $1}
     | show_stmt new_line_opt
+    {$$ = $1}
     | small_stmt
+    {$$ = $1}
     ;
 
 
 small_stmt    
     : break_stmt new_line_opt
+    {$$ = $1}
     | continue_stmt new_line_opt
+    {$$ = $1}
     | return_stmt NEWLINE
+    {$$ = $1}
     ;
 
 function_call_stmt
     : NAME '(' list_values_opt ')'
+    {$$ = new yy.CallFunction(@$, $1, $3)}
     ;
 
 list_values_opt
     :
+    {$$ = []}
     | list_values
+    {$$ = $1}
     ;
 
 list_values
     : expression
+    {$$ = [$1]}
     | list_values ',' expression
+    {
+        $1.push($3);
+        $$ = $1;
+    }
     ;
 
 if_stmt
     : 'Si' '(' expression ')' ':' block else_opt
+    {$$ = new yy.IfStmt(@$, $3, $6, $7)}
     ;
 
 else_opt
     :
+    {$$ = []}
     | else_stmt
+    {$$ = $1}
     ;
 
 else_stmt
     : 'Sino' ':' block
+    {$$ = $3}
     ;
 
 for_stmt
-    : 'Para' '(' 'Int' NAME '=' expression ';' expression ';' op_for ')' ':' block
+    : 'Para' '(' init_for ';' expression ';' op_for ')' ':' block
+    {        
+        $$ = new yy.forStmt(@$, $10, $3, $5, $7);
+    }
+    ;
+
+init_for
+    : 'Int' variable_id '=' expression
+    {$$ = new yy.VariableDeclarator(@$, $2, $4);}
     ;
 
 op_for
     : '++'
+    {$$ = yytext;}
     | '--'
+    {$$ = yytext;}
     ;
 
 while_stmt
     : 'Mientras' '(' expression ')' ':' block
+    {$$ = new yy.whileStmt(@$, $6, $3);}
     ;
 
 show_stmt
-    : 'Mostrar' '(' STRING ',' format_expressions_opt ')'
+    : 'Mostrar' '(' string_literal ',' format_expressions_opt ')'
+    {$$ = new yy.Mostrar(@$, $3, $5);}
     ;
 
 format_expressions_opt
     : 
+    {$$ = [];}
     | format_expressions
+    {$$ = $1;}
     ;
 
 format_expressions
     : expression
+    {$$ = [$1];}
     | format_expressions ',' expression
+    {
+        $1.push($3);
+        $$ = $1;
+    }
     ;
 
 drawAST_stmt
-    : 'DibujarAST' '(' NAME ')'
+    : 'DibujarAST' '(' variable_id ')'
+    {$$ = new yy.DibujarAST(@$, $3);}
     ;
 
 drawEXP_stmt
     : 'DibujarEXP' '(' expression ')'
+    {$$ = new yy.DibujarEXP($3);}
     ;
 
 drawTS_stmt
     : 'DibujarTS' '(' ')'
+    {$$ = new yy.DibujarTS(@$);}
     ;
 
 return_stmt
     : 'Retorno' return_expression_opt
+    {$$ = new yy.returnStmt(@$, $2)}
     ;
 
 return_expression_opt
     :
+    {$$ = null;}
     | expression
+    {$$ = $1;}
     ;
 
 break_stmt
     : 'Detener'
+    {$$ = new yy.breakStmt(@$);}
     ;
 
 continue_stmt
     : 'Continuar'
+    {$$ = new yy.continueStmt(@$);}
     ;
 
 expression
     : conditional_expression
+    {$$ = $1;}
     ;
 
 conditional_expression 
     : conditional_or_expression
+    {$$ = $1;}
 	;
 
 conditional_or_expression
     : conditional_xor_expression
+    {$$ = $1;}
 	| conditional_or_expression '||' conditional_xor_expression
+    {$$ = new yy.LogicalExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	;
 
 conditional_xor_expression
     : conditional_and_expression
+    {$$ = $1;}
     | conditional_xor_expression '!&' conditional_and_expression
+    {$$ = new yy.LogicalExpression(@$, yy.Type.Boolean, $1, $2, $3);}
     ;
 
 conditional_and_expression
     : equality_expression
+    {$$ = $1;}
 	| conditional_and_expression '&&' equality_expression
+    {$$ = new yy.LogicalExpression(@$, yy.Type.Boolean, $1, $2, $3);}    
 	;
 
 equality_expression
     : relational_expression
+    {$$ = $1;}
 	| equality_expression '==' relational_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	| equality_expression '!=' relational_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
     | equality_expression '~' relational_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	;
 
 relational_expression
 	: additive_expression
+    {$$ = $1;}
 	| relational_expression '<' additive_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	| relational_expression '>' additive_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	| relational_expression '<=' additive_expression
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	| relational_expression '>=' additive_expression	
+    {$$ = new yy.BinaryExpression(@$, yy.Type.Boolean, $1, $2, $3);}
 	;
 
 additive_expression 
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression    
+    {$$ = $1;}
+	| additive_expression '+' multiplicative_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}    
 	| additive_expression '-' multiplicative_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}
 	;
 
 multiplicative_expression 
 	: pow_expression
+    {$$ = $1;}
 	| multiplicative_expression '*' pow_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}
 	| multiplicative_expression '/' pow_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}
 	| multiplicative_expression '%' pow_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}
 	;
 
 pow_expression
     : unary_expression
+    {$$ = $1;}
     | unary_expression '^' pow_expression
+    {$$ = new yy.BinaryExpression(@$, null, $1, $2, $3);}
     ;
 
 unary_expression	
 	: value_literal
-    | NAME
+    {$$ = $1}
+    | variable_id
+    {$$ = new yy.UnaryExpression(@$, null, null, $1);}
     | function_call_stmt
-	| MINUS unary_expression
+    {$$ = new yy.UnaryExpression(@$, null, null, $1);}
+	| '-' unary_expression
+    {
+        $2.operator = $1;
+        $$ = $2;
+    }
 	| '(' expression ')'
+    {$$ = $2;}
     | '!' unary_expression    
+    {
+        $2.operator = $1;
+        $$ = $2;
+    }
 	;
 
 value_literal
-    : STRING
-    | NUMBER    
-    | CHAR_LITERAL
+    : string_literal
+    {$$ = new yy.UnaryExpression(@$, yy.Type.String, null, $1);}
+    | NUMBER  
+    {
+        let tp;
+        let num = Number($1);
+        num % 1 != 0 ? tp = yy.Type.Double
+                            : tp = yy.Type.Int
+        $$ = new yy.UnaryExpression(@$, tp, null, num);
+    }
+    | char_literal
+    {$$ = new yy.UnaryExpression(@$, yy.Type.Char, null, $1);}
     | 'true'
+    {$$ = new yy.UnaryExpression(@$, yy.Type.Boolean, null, true);}
     | 'false'
+    {$$ = new yy.UnaryExpression(@$, yy.Type.Boolean, null, false);}
+    ;
+
+string_literal
+    : STRING
+    {
+        let val1 = $1.replaceAll("\"", "");
+        $$ = val1;
+    }
+    ;
+
+char_literal
+    : CHAR_LITERAL
+    {
+        let val2 = $1.replaceAll("'", "");
+        $$ = val2;
+    }
     ;

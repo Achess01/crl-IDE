@@ -131,7 +131,7 @@ export class LogicalExpression extends BinaryExpression{
     }
 }
 
-export class UnaryExpresion extends Expr{
+export class UnaryExpression extends Expr{
     operator:string | null;
     argument:string | number | Identifier | boolean | CallFunction;
     constructor(loc: any, type: Type | null, operator: string, argument: string | number | Identifier | boolean | CallFunction){
@@ -297,7 +297,7 @@ export class whileStmt extends Node{
 
 /* End with symbol table */
 
-export class Mostar extends Node{
+export class Mostrar extends Node{
     strFormat: string;
     expressions: Expr[] | null;
     constructor(loc:any, strFormat: string, expressions: Expr[] | null){

@@ -8,7 +8,7 @@ import {
     VariableDeclaration,
     BinaryExpression,
     LogicalExpression,
-    UnaryExpresion,
+    UnaryExpression,
     Assignment,
     CallFunction,
     functionParam,
@@ -20,7 +20,7 @@ import {
     IfStmt,
     forStmt,
     whileStmt,
-    Mostar,
+    Mostrar,
     DibujarAST,
     DibujarEXP,
     DibujarTS
@@ -42,7 +42,7 @@ yy.VariableDeclarator = VariableDeclarator;
 yy.VariableDeclaration = VariableDeclaration;
 yy.BinaryExpression = BinaryExpression;
 yy.LogicalExpression = LogicalExpression;
-yy.UnaryExpresion = UnaryExpresion;
+yy.UnaryExpression = UnaryExpression;
 yy.Assignment = Assignment;
 yy.CallFunction = CallFunction;    
 yy.functionParam = functionParam;
@@ -54,7 +54,7 @@ yy.functionMain = functionMain;
 yy.IfStmt = IfStmt;
 yy.forStmt = forStmt;
 yy.whileStmt = whileStmt;    
-yy.Mostar = Mostar;
+yy.Mostrar = Mostrar;
 yy.DibujarAST = DibujarAST;
 yy.DibujarEXP = DibujarEXP;
 yy.DibujarTS = DibujarTS;    
