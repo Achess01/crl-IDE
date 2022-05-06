@@ -29,7 +29,7 @@ export class Program extends Node {
   }
 
   accept(): void {
-      Visitor . visit(bodychild)
+      
   }
 }
 
@@ -41,6 +41,18 @@ export class ImportDeclaration extends Node {
   }
 
   accept(): void {}
+}
+
+export class Incerteza extends Node{
+    value:number
+    constructor(loc:any, value:number){
+        super(loc);
+        this.value = value;
+    }
+
+    accept(): void {
+        
+    }
 }
 
 export class Identifier extends Node{

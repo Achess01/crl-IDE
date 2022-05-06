@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import ast from 'src/parser/ast';
 
 
 @Component({
@@ -47,7 +48,7 @@ Int getMax(Int n1, Int n2):
     console.log(this.content);
   } */
 
-  onCompile(){
-    console.log(this.content);
+  onCompile(){    
+    console.log(ast(this.content));
   }
 }

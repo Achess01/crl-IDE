@@ -144,30 +144,6 @@ comment                 {multilineComment}|{inlineComment}
 
 /lex
 
-%{
-    function Operation(type, args){
-        this.type = type;
-        if(this.type === 'un'){
-            this.value = args.value;
-        }else{
-            this.left = args.left;
-            this.right = args.right;
-        }
-        
-    };
-
-    Operation.prototype.run = function(){
-        switch(this.type){
-            case 'un':
-                return Number(this.value);                
-            case '+':
-                let val = this.left.run() + this.right.run();
-                return val;                
-        }            
-    };
-
-%}
-
 %start initialState
 
 %%
@@ -184,39 +160,61 @@ initialState
 
 file_input    
     : file_input0 EOF
+    {         
+        $$ = new yy.Program(@$, $1);
+    }
     ; 
 
 file_input0
-    : header_stmt
+    : header_stmt      
       input_stmt
+      {          
+          $$ = $1.concat($2);
+      }
     ;
 
 header_stmt
-    : imports_opt
+    : imports_opt     
       incert_opt
+      {          
+          $$ = $1.concat($2);
+      }
     ;
 
 imports_opt
     : 
-    | imports    
+    {$$ = []}
+    | imports
+    {$$ = $1}    
     ;
 
 imports
-    : import     
+    : import   
+    {$$ = [$1]}  
     | imports import
+    {
+        $1.push($2);
+        $$ = $1;
+    }
     ;
 
 import
-    : 'Importar' NAME '.' 'crl' new_line_opt     
+    : 'Importar' NAME '.' 'crl' new_line_opt   
+    {
+        $$ = new yy.ImportDeclaration(@$, $2);
+    }  
     ;
 
 incert_opt
     : 
+    {$$ = []}
     | incert
+    {$$ = [$1]}
     ;
 
 incert
     : Incerteza NUMBER new_line_opt    
+    {$$ = new yy.Incerteza(@$, $2)}
     ;
 
 new_line_opt        
@@ -226,68 +224,116 @@ new_line_opt
 
 input_stmt
     :
+    {$$=[]}
     | input_stmt0
+    {$$ = $1}
     ;
 
 input_stmt0
     : global_stmt
+    { $$ = [$1]}
     | input_stmt0 global_stmt
+    {
+        $1.push($2)
+        $$ = $1;
+    }
     ;
 
 global_stmt    
     : variable_declarators new_line_opt
+    {$$ = $1}
     | variable_assignment new_line_opt
+    {$$ = $1}
     | method_declarator new_line_opt
+    {$$ = $1}
     ;
 
 variable_declarators
     : type variable_list_declarators
+    {
+        $$ = new yy.VariableDeclaration(@$, $1, $2);
+    }
     ;
 
 variable_list_declarators
     : variable_declarator
+    {$$ = [$1]}
     | variable_list_declarator ',' variable_declarator
+    {
+        $1.push($3);
+        $$ = $1;
+    }
     ; 
 
 variable_declarator
     : variable_id
+    {         
+        $$ = new yy.VariableDeclarator(@$, $1, null);
+    }
     | variable_assignment
+    {
+        $$ = new yy.VariableDeclarator(@$, $1.id, $1.expression);
+    }
     ;
 
 variable_id
     : NAME
+    {$$ = new yy.Identifier(@$, $1);}
     ;
 
 variable_assignment
     : variable_id '=' expression
+    {$$ = new yy.Assignment(@$, $1, $3)}
     ;
 
 type
     : 'Double'
+    {$$ = yy.Type.Double}
     | 'Boolean'
+    {$$ = yy.Type.Boolean}
     | 'String'
+    {$$ = yy.Type.Double}
     | 'Int'
+    {$$ = yy.Type.Int}
     | 'Char'
+    {$$ = yy.Type.Char}
     ;
 
 method_declarator
-    : type NAME '(' params_list_opt ')' ':' block    
+    : type NAME '(' params_list_opt ')' ':' block   
+    {
+        $$ = new yy.functionDeclaration(@$, $2, $4, $1, $7);
+    } 
     | 'Void' NAME '(' params_list_opt ')' ':' block
+    {
+        $$ = new yy.functionDeclaration(@$, $2, $4, yy.Type.Void, $7);
+    } 
     | 'Void' 'Principal' '(' params_list_opt ')' ':' block
+    {
+        $$ = new yy.functionMain(@$, $7);
+    } 
     ;
 
 params_list_opt
     :
+    {$$ = []}
     | params_list
+    {$$ = $1}
     ;
 
 params_list
     : param
+    {$$ = [$1]}
     | params_list ',' param
+    {
+        $1.push($3);
+        $$ = $1;
+    }
     ;
 
 param
     : type variable_id
+    {$$ = new yy.functionParam(@$, $1, $2)}
     ;
 
 block
@@ -448,12 +494,7 @@ relational_expression
 
 additive_expression 
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-    {
-        let obj = new Operation($2, {left:$1, right:$3});        
-        console.log(obj.run());
-        $$ = obj;        
-    }
+	| additive_expression '+' multiplicative_expression    
 	| additive_expression '-' multiplicative_expression
 	;
 
@@ -480,8 +521,7 @@ unary_expression
 
 value_literal
     : STRING
-    | NUMBER
-    {$$ = new Operation("un", {value: yytext})}
+    | NUMBER    
     | CHAR_LITERAL
     | 'true'
     | 'false'
