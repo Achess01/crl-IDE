@@ -27,7 +27,7 @@ import {
   DibujarTS,
 } from '../astMembers/Node';
 
-class Visitor {
+abstract class Visitor {
   visit(node: Node): void {
     switch (node.constructor.name) {
       case Program.name:
@@ -72,8 +72,48 @@ class Visitor {
       case continueStmt.name:
         this.visitcontinueStmt(node as continueStmt);
         break;
+      case breakStmt.name:
+        this.visitbreakStmt(node as breakStmt);
+        break;
+      case functionDeclaration.name:
+        this.visitfunctionDeclaration(node as functionDeclaration);
+        break;
+      case functionMain.name:
+        this.visitfunctionMain(node as functionMain);
+        break;
+      case IfStmt.name:
+        this.visitIfStmt(node as IfStmt);
+        break;
+      case forStmt.name:
+        this.visitforStmt(node as forStmt);
+        break;
+      case whileStmt.name:
+        this.visitwhileStmt(node as whileStmt);
+        break;
+      case Mostrar.name:
+        this.visitMostrar(node as Mostrar);
+        break;
+      case DibujarAST.name:
+        this.visitDibujarAST(node as DibujarAST);
+        break;
+      case DibujarEXP.name:
+        this.visitDibujarEXP(node as DibujarEXP);
+        break;
+      case DibujarTS.name:
+        this.visitDibujarTS(node as DibujarTS);
+        break;
     }
   }
+  visitbreakStmt(node: breakStmt) {}
+  visitfunctionDeclaration(node: functionDeclaration) {}
+  visitfunctionMain(node: functionMain) {}
+  visitIfStmt(node: IfStmt) {}
+  visitforStmt(node: forStmt) {}
+  visitwhileStmt(node: whileStmt) {}
+  visitMostrar(node: Mostrar) {}
+  visitDibujarAST(node: DibujarAST) {}
+  visitDibujarEXP(node: DibujarEXP) {}
+  visitDibujarTS(node: DibujarTS) {}
   visitBinaryExpression(node: BinaryExpression) {}
   visitLogicalExpression(node: LogicalExpression) {}
   visitUnaryExpression(node: UnaryExpression) {}
