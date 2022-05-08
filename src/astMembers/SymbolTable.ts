@@ -1,10 +1,12 @@
 import { functionDeclaration, VariableDeclarator } from "./Node";
 
 export class SymTable{
+    name:string;
     private symbolVars: { [id: string] : VariableDeclarator} = {};
     private symbolFuncs: { [id: string] : functionDeclaration[]} = {};
-
-
+    constructor(name:string){
+        this.name = name;
+    }
 
     addVariable(variable: VariableDeclarator): boolean{
         if(!this.itExists(variable.id.name)){

@@ -29,7 +29,7 @@ export class Program extends Node {
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
-    this.table = new SymTable();
+    this.table = new SymTable("global");
   }
 
   accept(visitor: Visitor): void {
@@ -275,7 +275,7 @@ export class functionDeclaration extends Node {
     this.params = params;
     this.type = type;
     this.body = body;
-    this.table = new SymTable();
+    this.table = new SymTable(`función ${id}`);
   }
 
   accept(visitor: Visitor): void {
@@ -295,7 +295,7 @@ export class functionMain extends Node {
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
-    this.table = new SymTable();
+    this.table = new SymTable("Main()");
   }
 
   accept(visitor: Visitor): void {
@@ -311,12 +311,14 @@ export class IfStmt extends Node {
   consequent: Node[];
   alternate: Node[];
   table: SymTable;
+  tableAlternate: SymTable;
   constructor(loc: any, test: Expr, consequent: Node[], alternate: Node[]) {
     super(loc);
     this.test = test;
     this.consequent = consequent;
     this.alternate = alternate;
-    this.table = new SymTable();
+    this.table = new SymTable("Si");
+    this.tableAlternate = new SymTable("Sino");
   }
 
   accept(visitor: Visitor): void {
@@ -350,7 +352,7 @@ export class forStmt extends Node {
     this.init = init;
     this.test = test;
     this.update = update;
-    this.table = new SymTable();
+    this.table = new SymTable("Para");
   }
 
   accept(visitor: Visitor): void {
@@ -371,7 +373,7 @@ export class whileStmt extends Node {
     super(loc);
     this.body = body;
     this.test = test;
-    this.table = new SymTable();
+    this.table = new SymTable("Mientras");
   }
 
   accept(visitor: Visitor): void {
