@@ -26,10 +26,12 @@ export class Program extends Node {
   body: Node[];
   incerteza: number = 0.5;
   table: SymTable;
+  main: functionMain | null;
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
     this.table = new SymTable("global");
+    this.main = null;
   }
 
   accept(visitor: Visitor): void {
@@ -263,6 +265,7 @@ export class functionDeclaration extends Node {
   type: Type;
   body: Node[];
   table: SymTable;
+  nameForTable:string;
   constructor(
     loc: any,
     id: string,
@@ -275,6 +278,7 @@ export class functionDeclaration extends Node {
     this.params = params;
     this.type = type;
     this.body = body;
+    this.nameForTable = this.getNameForTable();
     this.table = new SymTable(`función ${id}`);
   }
 
@@ -286,6 +290,17 @@ export class functionDeclaration extends Node {
         child.accept(visitor);
     }
       visitor.visit(this);
+  }
+
+  private getNameForTable(): string{
+    let funcTypes = this.params.reduce((previus, current) => {
+        if(previus.length === 0){
+            return current.type.toString();
+        }else{
+            return `${previus},${current.type.toString()}`;
+        }
+    }, "");
+    return `${this.id}(${funcTypes})`;
   }
 }
 
