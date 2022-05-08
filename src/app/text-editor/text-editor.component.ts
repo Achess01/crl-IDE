@@ -29,8 +29,11 @@ Importar segundo3.crl
 Importar segundo4.crl     
 Incerteza 0.34
 
+String cadena1, cadena2 = "Hola", cadena3 = "amigos"
+
+
 Int getMax(Int n1, Int n2):
-    Int entero = 234 + 34 +98 + 1000 * 2
+    Int entero0, entero1, entero2 = 3234 + 2, entero = 234 + 34 +98 + 1000 * 2
     Si (n1 >= n2):
         DibujarTS()
         Retorno variable
