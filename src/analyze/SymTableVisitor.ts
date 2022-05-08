@@ -1,12 +1,9 @@
-import {
-    Node,
+import {    
     Program,
     ImportDeclaration,
     Incerteza,
-    Identifier,
-    Type,
-    VariableDeclarator,
-    VariableDeclaration,
+    Identifier,    
+    VariableDeclarator,    
     BinaryExpression,
     LogicalExpression,
     UnaryExpression,
@@ -29,5 +26,6 @@ import {
 import Visitor from "./Visitor";
 
 class SymTableVisitor extends Visitor{
+
     
 }
