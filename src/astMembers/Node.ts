@@ -1,3 +1,5 @@
+import { SymTable } from "./SymbolTable";
+
 export abstract class Node {
   loc: any;
   constructor(loc: any) {
@@ -9,7 +11,7 @@ export abstract class Node {
 
 export class Project extends Node{
     extraFiles: Program[];
-    main: Program;
+    main: Program;    
     constructor(loc: any, main: Program, extraFiles: Program[]){
         super(loc);
         this.main = main;
@@ -24,9 +26,11 @@ export class Project extends Node{
 export class Program extends Node {
   body: Node[];
   incerteza:number = 0.5;
+  table: SymTable;
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
+    this.table = new SymTable();
   }
 
   accept(): void {
@@ -80,10 +84,14 @@ export enum Type{
 export class VariableDeclarator extends Node {
     id: Identifier;
     init: Expr | null;
+    type: Type | null;
+    value: any;
     constructor(loc: any, id: Identifier, init: Expr | null){
         super(loc);
         this.id = id;
-        this.init = init;        
+        this.init = init;      
+        this.type = null;  
+        this.value = null;
     }
   accept(): void {}
 }
@@ -220,12 +228,14 @@ export class functionDeclaration extends Node{
     params: functionParam[];
     type: Type;
     body: Node[];
+    table: SymTable;
     constructor(loc: any, id:string, params: functionParam[], type: Type, body: Node[]){
         super(loc);
         this.id = id;
         this.params = params;        
         this.type = type;
-        this.body = body;        
+        this.body = body;                
+        this.table = new SymTable();
     }
 
     accept(): void {
@@ -236,9 +246,11 @@ export class functionDeclaration extends Node{
 
 export class functionMain extends Node{
     body: Node[];
+    table: SymTable;
     constructor(loc: any, body: Node[]){
         super(loc);
         this.body = body;
+        this.table = new SymTable();
     }
 
     accept(): void {
@@ -250,11 +262,13 @@ export class IfStmt extends Node{
     test: Expr;
     consequent: Node[];
     alternate: Node[];
+    table: SymTable;
     constructor(loc: any, test:Expr, consequent: Node[], alternate: Node[]){
         super(loc);
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
+        this.table = new SymTable();
     }
 
     accept(): void {
@@ -267,13 +281,15 @@ export class forStmt extends Node{
     init: VariableDeclarator;
     test: Expr;
     update: string;
+    table: SymTable;
 
     constructor(loc: any, body: Node[], init: VariableDeclarator, test:Expr, update:string){
         super(loc);
         this.body = body;
         this.init = init;
         this.test = test;
-        this.update = update;        
+        this.update = update;   
+        this.table = new SymTable();     
     }
 
     accept(): void {
@@ -284,11 +300,12 @@ export class forStmt extends Node{
 export class whileStmt extends Node{
     body: Node[];
     test: Expr;
-
+    table: SymTable;
     constructor(loc:any, body: Node[], test: Expr){
         super(loc);
         this.body = body;
         this.test = test;
+        this.table = new SymTable();
     }
 
     accept(): void {

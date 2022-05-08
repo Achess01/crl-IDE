@@ -18,8 +18,10 @@ export class SymTable{
     private symbolVars: { [id: string] : VarSymbol} = {};
     private symbolFuncs: { [id: string] : functionDeclaration[]} = {};
 
+
+
     addVariable(variable: VariableDeclarator, kind:Type): boolean{
-        if(this.isInsertableVar(variable.id.name)){
+        if(this.itExists(variable.id.name)){
             this.symbolVars[variable.id.name] = new VarSymbol(kind, variable.id);
             return true;
         }
@@ -35,7 +37,7 @@ export class SymTable{
         return false;
     }
 
-    isInsertableVar(id: string): boolean{
+    itExists(id: string): boolean{
         return this.symbolVars[id] === undefined; 
     }
 

@@ -231,10 +231,16 @@ input_stmt
 
 input_stmt0
     : global_stmt
-    { $$ = [$1]}
+    { 
+        $$ = Array.from($1);
+    }
     | input_stmt0 global_stmt
-    {
-        $1.push($2)
+    {        
+        if($2.constructor.name === 'Array'){
+            $1.push(...$2);
+        }else{
+            $1.push($2)
+        }        
         $$ = $1;
     }
     ;
@@ -251,14 +257,16 @@ global_stmt
 variable_declarators
     : type variable_list_declarators
     {
-        $$ = new yy.VariableDeclaration(@$, $2, $1);
+        $2.forEach(v => v.type = $1);
+        //$$ = new yy.VariableDeclaration(@$, $2, $1);
+        $$ = $2;
     }
     ;
 
 variable_list_declarators
     : variable_declarator
     {$$ = [$1]}
-    | variable_list_declarator ',' variable_declarator
+    | variable_list_declarators ',' variable_declarator
     {
         $1.push($3);
         $$ = $1;
@@ -350,10 +358,16 @@ body_block_opt
 
 body_block
     : body_stmt
-    {$$ = [$1]}
-    | body_block body_stmt
     {
-        $1.push($2);
+        $$ = Array.from($1);
+    }
+    | body_block body_stmt
+    {        
+        if($2.constructor.name === 'Array'){
+            $1.push(...$2);
+        }else{
+            $1.push($2);
+        }                
         $$ = $1;
     }
     ;
