@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import SymTableVisitor from 'src/analyze/SymTableVisitor';
 import ast from 'src/parser/ast';
 
 
@@ -52,8 +53,9 @@ Int getMax(Int n1, Int n2):
   } */
 
   onCompile(){    
-    let tree = ast(this.content);
-    console.log(tree.constructor.name);
+    let tree = ast(this.content);    
+    let visitorTable = new SymTableVisitor();
+    visitorTable.visit(tree);
     console.log(tree);
   }
 }

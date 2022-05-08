@@ -1,28 +1,14 @@
-import { functionDeclaration, Identifier, Type, VariableDeclarator } from "./Node";
-
-
-export class VarSymbol{
-    type: Type
-    id: Identifier
-    value: number | string | boolean | null;
-    constructor(type: Type, id: Identifier){
-        this.type = type;
-        this.id = id;
-        this.value = null;
-    }
-    
-}
-
+import { functionDeclaration, VariableDeclarator } from "./Node";
 
 export class SymTable{
-    private symbolVars: { [id: string] : VarSymbol} = {};
+    private symbolVars: { [id: string] : VariableDeclarator} = {};
     private symbolFuncs: { [id: string] : functionDeclaration[]} = {};
 
 
 
-    addVariable(variable: VariableDeclarator, kind:Type): boolean{
-        if(this.itExists(variable.id.name)){
-            this.symbolVars[variable.id.name] = new VarSymbol(kind, variable.id);
+    addVariable(variable: VariableDeclarator): boolean{
+        if(!this.itExists(variable.id.name)){
+            this.symbolVars[variable.id.name] = variable;
             return true;
         }
         return false;
@@ -31,20 +17,23 @@ export class SymTable{
     addFunc(func: functionDeclaration): boolean{
         if(this.isInsertableFunc(func)){
             let funcs = this.symbolFuncs[func.id];
-            funcs.push(func);
+            if(funcs === undefined){
+                this.symbolFuncs[func.id] = [func];
+            }else{
+                funcs.push(func);
+            }
             return true;
         }
         return false;
     }
 
-    itExists(id: string): boolean{
-        return this.symbolVars[id] === undefined; 
+    itExists(id: string): boolean{        
+        return this.symbolVars[id] !== undefined; 
     }
 
     isInsertableFunc(funcDec: functionDeclaration): boolean{
         let funcs = this.symbolFuncs[funcDec.id];
-        if(funcs === undefined) return true;
-        let isInsertable = true;
+        if(funcs === undefined) return true;        
         for(let fn of funcs){
             if(funcDec.params.length == fn.params.length){                
                 let repeatedParams = true;
