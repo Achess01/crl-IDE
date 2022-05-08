@@ -4,16 +4,36 @@ export class SymTable{
     name:string;
     private symbolVars: { [id: string] : VariableDeclarator} = {};
     private symbolFuncs: { [id: string] : functionDeclaration} = {};
+    upperAmbit: SymTable | null;
     constructor(name:string){
         this.name = name;
+        this.upperAmbit = null;
     }
 
-    getVariable(id:string): VariableDeclarator | undefined{        
-        return this.symbolVars[id];
+    addUpperAmbit(upperTable:SymTable){        
+        this.upperAmbit = upperTable;
+    }
+
+    getVariable(id:string): VariableDeclarator | undefined{    
+        let variable = this.symbolVars[id];
+        if(variable !== undefined){
+            return variable;
+        }else if(this.upperAmbit !== null){                                    
+            let higherVariable = this.upperAmbit.getVariable(id);
+            return higherVariable;
+        }
+        return undefined;
     }
 
     getFunction(id:string): functionDeclaration | undefined{
-        return this.symbolFuncs[id];
+        let func  = this.symbolFuncs[id];
+        if(func !== undefined){
+            return func;
+        }else if(this.upperAmbit !== null){
+            let higherFunc = this.upperAmbit.getFunction(id);
+            return higherFunc;
+        }
+        return undefined;
     }
     
     addVariable(variable: VariableDeclarator): boolean{

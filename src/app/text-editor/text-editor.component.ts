@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
-
+import SymTableVisitor from 'src/analyze/SymTableVisitor';
 
 @Component({
   selector: 'app-text-editor',
@@ -30,11 +30,10 @@ Importar segundo3.crl
 Importar segundo4.crl     
 Incerteza 0.34
 
-String cadena1, cadena2 = "Hola", cadena3 = "amigos"
+String cadena2, cadena2 = "Hola", cadena3 = "amigos"
 
 
 Int getMax(Int n1, Int n2):
-    Int entero0, entero1, entero2 = 3234 + 2, entero = 234 + 34 +98 + 1000 * 2
     Si (n1 >= n2):
         DibujarTS()
         Retorno variable
@@ -44,7 +43,9 @@ Int getMax(Int n1, Int n2):
                 Mostrar("Hola amigos {0}", x) 
                 Retorno x
     Sino:
-        Retorno n2`
+        Retorno n2    
+    Int entero0, entero, entero2 = 3234 + entero, entero = 234 + 34 +98 + 1000 * 2
+    `
   }
 
   /* setEditorContent(event: any) {
@@ -56,6 +57,7 @@ Int getMax(Int n1, Int n2):
     let tree = ast(this.content);    
     let visitorTable = new SymTableGlobalVisitor();
     visitorTable.visit(tree);
+    tree.accept(new SymTableVisitor());
     console.log(tree);
   }
 }

@@ -1,5 +1,6 @@
 import { SymTable } from './SymbolTable';
 import Visitor from '../analyze/Visitor';
+import SymTableVisitor from 'src/analyze/SymTableVisitor';
 
 export abstract class Node {
   loc: any;
@@ -30,7 +31,7 @@ export class Program extends Node {
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
-    this.table = new SymTable("global");
+    this.table = new SymTable('global');
     this.main = null;
   }
 
@@ -92,6 +93,7 @@ export class VariableDeclarator extends Node {
   init: Expr | null;
   type: Type | null;
   value: any;
+  isParam: boolean = false;
   constructor(loc: any, id: Identifier, init: Expr | null) {
     super(loc);
     this.id = id;
@@ -99,8 +101,13 @@ export class VariableDeclarator extends Node {
     this.type = null;
     this.value = null;
   }
+
+  setParam() {
+    this.isParam = true;
+  }
+
   accept(visitor: Visitor): void {
-    if(this.init !== null) this.init.accept(visitor);
+    if (this.init !== null) this.init.accept(visitor);
     this.id.accept(visitor);
     visitor.visit(this);
   }
@@ -169,15 +176,10 @@ export class UnaryExpression extends Expr {
   }
 
   override accept(visitor: Visitor): void {
-    if(
-        this.argument.constructor.name === Identifier.name        
-        )
-    {
-        (this.argument as Identifier).accept(visitor);
-    }else if(
-        this.argument.constructor.name === CallFunction.name
-    ){
-        (this.argument as CallFunction).accept(visitor);
+    if (this.argument.constructor.name === Identifier.name) {
+      (this.argument as Identifier).accept(visitor);
+    } else if (this.argument.constructor.name === CallFunction.name) {
+      (this.argument as CallFunction).accept(visitor);
     }
     visitor.visit(this);
   }
@@ -211,10 +213,10 @@ export class CallFunction extends Node {
   }
 
   accept(visitor: Visitor): void {
-      for(let exprs of this.args){
-          exprs.accept(visitor);
-      }      
-      visitor.visit(this);
+    for (let exprs of this.args) {
+      exprs.accept(visitor);
+    }
+    visitor.visit(this);
   }
 }
 
@@ -228,7 +230,7 @@ export class functionParam extends Node {
   }
 
   accept(visitor: Visitor): void {
-      this.id.accept(visitor);
+    this.id.accept(visitor);
     visitor.visit(this);
   }
 }
@@ -240,13 +242,13 @@ export class returnStmt extends Node {
     this.argument = argument;
   }
   accept(visitor: Visitor): void {
-      if(this.argument !== null) this.argument.accept(visitor);
+    if (this.argument !== null) this.argument.accept(visitor);
     visitor.visit(this);
   }
 }
 
 export class continueStmt extends Node {
-  accept(visitor: Visitor): void {      
+  accept(visitor: Visitor): void {
     visitor.visit(this);
   }
 }
@@ -264,7 +266,7 @@ export class functionDeclaration extends Node {
   type: Type;
   body: Node[];
   table: SymTable;
-  nameForTable:string;
+  nameForTable: string;
   constructor(
     loc: any,
     id: string,
@@ -282,23 +284,33 @@ export class functionDeclaration extends Node {
   }
 
   accept(visitor: Visitor): void {
-      for(let child of this.body){
-          child.accept(visitor);
-      }
-      for(let child of this.params){
-        child.accept(visitor);
-    }
+    if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
+      for (let child of this.params) {
+        child.accept(visitor);
+      }
+      for (let child of this.body) {
+        child.accept(visitor);
+      }
+    } else {
+      for (let child of this.body) {
+        child.accept(visitor);
+      }
+      for (let child of this.params) {
+        child.accept(visitor);
+      }
+      visitor.visit(this);
+    }
   }
 
-  private getNameForTable(): string{
+  private getNameForTable(): string {
     let funcTypes = this.params.reduce((previus, current) => {
-        if(previus.length === 0){
-            return current.type.toString();
-        }else{
-            return `${previus},${current.type.toString()}`;
-        }
-    }, "");
+      if (previus.length === 0) {
+        return current.type.toString();
+      } else {
+        return `${previus},${current.type.toString()}`;
+      }
+    }, '');
     return `${this.id}(${funcTypes})`;
   }
 }
@@ -309,14 +321,21 @@ export class functionMain extends Node {
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
-    this.table = new SymTable("Main()");
+    this.table = new SymTable('Main()');
   }
 
   accept(visitor: Visitor): void {
-    for(let child of this.body){
+    if (visitor.constructor.name === SymTableVisitor.name) {
+      visitor.visit(this);
+      for (let child of this.body) {
         child.accept(visitor);
+      }
+    } else {
+      for (let child of this.body) {
+        child.accept(visitor);
+      }
+      visitor.visit(this);
     }
-    visitor.visit(this);
   }
 }
 
@@ -331,19 +350,30 @@ export class IfStmt extends Node {
     this.test = test;
     this.consequent = consequent;
     this.alternate = alternate;
-    this.table = new SymTable("Si");
-    this.tableAlternate = new SymTable("Sino");
+    this.table = new SymTable('Si');
+    this.tableAlternate = new SymTable('Sino');
   }
 
   accept(visitor: Visitor): void {
-    for(let child of this.consequent){
+    if (visitor.constructor.name === SymTableVisitor.name) {
+      visitor.visit(this);
+      this.test.accept(visitor);
+      for (let child of this.consequent) {
         child.accept(visitor);
-    }
-    for(let child of this.alternate){
+      }
+      for (let child of this.alternate) {
         child.accept(visitor);
+      }
+    } else {
+      for (let child of this.consequent) {
+        child.accept(visitor);
+      }
+      for (let child of this.alternate) {
+        child.accept(visitor);
+      }
+      this.test.accept(visitor);
+      visitor.visit(this);
     }
-    this.test.accept(visitor);
-    visitor.visit(this);
   }
 }
 
@@ -366,16 +396,25 @@ export class forStmt extends Node {
     this.init = init;
     this.test = test;
     this.update = update;
-    this.table = new SymTable("Para");
+    this.table = new SymTable('Para');
   }
 
   accept(visitor: Visitor): void {
-    for(let child of this.body){
+    if (visitor.constructor.name === SymTableVisitor.name) {
+      visitor.visit(this);
+      this.init.accept(visitor);
+      this.test.accept(visitor);
+      for (let child of this.body) {
         child.accept(visitor);
+      }
+    } else {
+      for (let child of this.body) {
+        child.accept(visitor);
+      }
+      this.init.accept(visitor);
+      this.test.accept(visitor);
+      visitor.visit(this);
     }
-    this.init.accept(visitor);
-    this.test.accept(visitor);
-    visitor.visit(this);
   }
 }
 
@@ -387,15 +426,23 @@ export class whileStmt extends Node {
     super(loc);
     this.body = body;
     this.test = test;
-    this.table = new SymTable("Mientras");
+    this.table = new SymTable('Mientras');
   }
 
   accept(visitor: Visitor): void {
-    for(let child of this.body){
+    if (visitor.constructor.name === SymTableVisitor.name) {
+      visitor.visit(this);
+      this.test.accept(visitor);
+      for (let child of this.body) {
         child.accept(visitor);
+      }
+    } else {
+      for (let child of this.body) {
+        child.accept(visitor);
+      }
+      this.test.accept(visitor);
+      visitor.visit(this);
     }
-    this.test.accept(visitor);
-    visitor.visit(this);
   }
 }
 
@@ -411,12 +458,12 @@ export class Mostrar extends Node {
   }
 
   accept(visitor: Visitor): void {
-      if(this.expressions !== null){
-        for(let child of this.expressions){
-            child.accept(visitor);
-        }
+    if (this.expressions !== null) {
+      for (let child of this.expressions) {
+        child.accept(visitor);
       }
-      visitor.visit(this);
+    }
+    visitor.visit(this);
   }
 }
 
@@ -428,8 +475,8 @@ export class DibujarAST extends Node {
   }
 
   accept(visitor: Visitor): void {
-      this.id.accept(visitor);
-      visitor.visit(this);
+    this.id.accept(visitor);
+    visitor.visit(this);
   }
 }
 
@@ -441,13 +488,13 @@ export class DibujarEXP extends Node {
   }
 
   accept(visitor: Visitor): void {
-      this.expression.accept(visitor);
-      visitor.visit(this);
+    this.expression.accept(visitor);
+    visitor.visit(this);
   }
 }
 
 export class DibujarTS extends Node {
   accept(visitor: Visitor): void {
-      visitor.visit(this);
+    visitor.visit(this);
   }
 }
