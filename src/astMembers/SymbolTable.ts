@@ -8,6 +8,14 @@ export class SymTable{
         this.name = name;
     }
 
+    getVariable(id:string): VariableDeclarator | undefined{        
+        return this.symbolVars[id];
+    }
+
+    getFunction(id:string): functionDeclaration | undefined{
+        return this.symbolFuncs[id];
+    }
+    
     addVariable(variable: VariableDeclarator): boolean{
         if(this.isInsertableVar(variable.id.name)){
             this.symbolVars[variable.id.name] = variable;

@@ -3,7 +3,7 @@ import {
   Program,
   ImportDeclaration,
   Incerteza,
-  Identifier,  
+  Identifier,   
   VariableDeclarator,  
   BinaryExpression,
   LogicalExpression,
