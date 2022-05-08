@@ -213,8 +213,7 @@ export class CallFunction extends Node {
   accept(visitor: Visitor): void {
       for(let exprs of this.args){
           exprs.accept(visitor);
-      }
-      this.callee.accept(visitor);
+      }      
       visitor.visit(this);
   }
 }
