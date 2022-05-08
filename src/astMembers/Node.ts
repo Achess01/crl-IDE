@@ -201,10 +201,10 @@ export class Assignment extends Node {
 }
 
 export class CallFunction extends Node {
-  callee: Identifier;
+  callee: string;
   args: Expr[];
 
-  constructor(loc: any, callee: Identifier, args: Expr[]) {
+  constructor(loc: any, callee: string, args: Expr[]) {
     super(loc);
     this.callee = callee;
     this.args = args;
