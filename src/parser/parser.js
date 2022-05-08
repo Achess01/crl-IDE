@@ -124,7 +124,11 @@ this.$=[]
 break;
 case 17:
  
-        this.$ = Array.from($$[$0]);
+        if($$[$0].constructor.name === 'Array'){
+            this.$ = $$[$0];
+        }else{
+            this.$ = [$$[$0]];
+        } 
     
 break;
 case 18:
@@ -204,7 +208,11 @@ this.$ = new yy.functionParam(this._$, $$[$0-1], $$[$0])
 break;
 case 45:
 
-        this.$ = Array.from($$[$0]);
+        if($$[$0].constructor.name === 'Array'){
+            this.$ = $$[$0];
+        }else{
+            this.$ = [$$[$0]];
+        }         
     
 break;
 case 46:

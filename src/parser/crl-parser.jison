@@ -232,7 +232,11 @@ input_stmt
 input_stmt0
     : global_stmt
     { 
-        $$ = Array.from($1);
+        if($1.constructor.name === 'Array'){
+            $$ = $1;
+        }else{
+            $$ = [$1];
+        } 
     }
     | input_stmt0 global_stmt
     {        
@@ -359,7 +363,11 @@ body_block_opt
 body_block
     : body_stmt
     {
-        $$ = Array.from($1);
+        if($1.constructor.name === 'Array'){
+            $$ = $1;
+        }else{
+            $$ = [$1];
+        }         
     }
     | body_block body_stmt
     {        

@@ -54,8 +54,8 @@ class SymTableGlobalVisitor extends Visitor{
                 let variable = child as VariableDeclarator;
                 if(!node.table.addVariable(variable)){
                     logError(variable.id.loc, `El identificador '${variable.id.name}' ya está definido`);
-                }else{                    
-                    variable.accept(checkUndefined);
+                }else{      
+                    variable.init?.accept(checkUndefined);                    
                 }             
             }else if(child.constructor.name === Assignment.name){                
                 (child as Assignment).accept(checkUndefined);
