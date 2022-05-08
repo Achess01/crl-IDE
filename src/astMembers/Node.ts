@@ -216,16 +216,16 @@ export class breakStmt extends Node{
 
 /* With symbol table */
 export class functionDeclaration extends Node{
-    id: Identifier;
+    id: string;
     params: functionParam[];
     type: Type;
     body: Node[];
-    constructor(loc: any, id:Identifier, params: functionParam[], type: Type, body: Node[]){
+    constructor(loc: any, id:string, params: functionParam[], type: Type, body: Node[]){
         super(loc);
         this.id = id;
         this.params = params;        
         this.type = type;
-        this.body = body;
+        this.body = body;        
     }
 
     accept(): void {
