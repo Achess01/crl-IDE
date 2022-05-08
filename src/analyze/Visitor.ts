@@ -3,10 +3,8 @@ import {
   Program,
   ImportDeclaration,
   Incerteza,
-  Identifier,
-  Type,
-  VariableDeclarator,
-  VariableDeclaration,
+  Identifier,  
+  VariableDeclarator,  
   BinaryExpression,
   LogicalExpression,
   UnaryExpression,
@@ -44,10 +42,7 @@ abstract class Visitor {
         break;
       case VariableDeclarator.name:
         this.visitVariableDeclarator(node as VariableDeclarator);
-        break;
-      case VariableDeclaration.name:
-        this.visitVariableDeclaration(node as VariableDeclaration);
-        break;
+        break;              
       case BinaryExpression.name:
         this.visitBinaryExpression(node as BinaryExpression);
         break;
@@ -123,8 +118,7 @@ abstract class Visitor {
   visitreturnStmt(node: returnStmt) {}
   visitcontinueStmt(node: continueStmt) {}
   visitIdentifier(node: Identifier) {}
-  visitVariableDeclarator(node: VariableDeclarator) {}
-  visitVariableDeclaration(node: VariableDeclaration) {}
+  visitVariableDeclarator(node: VariableDeclarator) {}  
   visitProgram(node: Program) {}
   visitImportDeclaration(node: ImportDeclaration) {}
   visitIncerteza(node: Incerteza) {}

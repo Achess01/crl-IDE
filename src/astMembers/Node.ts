@@ -96,7 +96,7 @@ export class VariableDeclarator extends Node {
   accept(): void {}
 }
 
-export class VariableDeclaration extends Node {
+/* export class VariableDeclaration extends Node {
   declarations: Node[];
   kind: Type;
   constructor(loc: any, declarations: Node[], kind: Type) {
@@ -106,7 +106,7 @@ export class VariableDeclaration extends Node {
   }
 
   accept(): void {}
-}
+} */
 
 abstract class Expr extends Node{
     type: Type | null;

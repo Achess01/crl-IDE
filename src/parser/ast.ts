@@ -4,8 +4,7 @@ import {
     Incerteza,
     Identifier,
     Type,
-    VariableDeclarator,
-    VariableDeclaration,
+    VariableDeclarator,    
     BinaryExpression,
     LogicalExpression,
     UnaryExpression,
@@ -39,7 +38,6 @@ yy.Incerteza = Incerteza;
 yy.Identifier = Identifier;
 yy.Type = Type;
 yy.VariableDeclarator = VariableDeclarator;
-yy.VariableDeclaration = VariableDeclaration;
 yy.BinaryExpression = BinaryExpression;
 yy.LogicalExpression = LogicalExpression;
 yy.UnaryExpression = UnaryExpression;
