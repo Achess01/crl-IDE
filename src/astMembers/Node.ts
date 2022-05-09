@@ -8,7 +8,7 @@ export abstract class Node {
     this.loc = loc;
   }
 
-  abstract accept(visitor: Visitor): void;
+  abstract accept(visitor: Visitor, ambit: SymTable | null): void;
 }
 
 export class Project extends Node {
@@ -20,7 +20,7 @@ export class Project extends Node {
     this.extraFiles = extraFiles;
   }
 
-  accept(visitor: Visitor): void {}
+  accept(visitor: Visitor, ambit: SymTable | null): void {}
 }
 
 export class Program extends Node {
@@ -35,9 +35,9 @@ export class Program extends Node {
     this.main = null;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     for (let child of this.body) {
-      child.accept(visitor);
+      child.accept(visitor, ambit);
     }
     visitor.visit(this);
   }
@@ -50,7 +50,7 @@ export class ImportDeclaration extends Node {
     this.fileId = fileId;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }
@@ -62,7 +62,7 @@ export class Incerteza extends Node {
     this.value = value;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }
@@ -74,7 +74,7 @@ export class Identifier extends Node {
     this.name = name;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }
@@ -106,9 +106,9 @@ export class VariableDeclarator extends Node {
     this.isParam = true;
   }
 
-  accept(visitor: Visitor): void {
-    if (this.init !== null) this.init.accept(visitor);
-    this.id.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (this.init !== null) this.init.accept(visitor, ambit);
+    this.id.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
@@ -122,7 +122,7 @@ export class VariableDeclarator extends Node {
     this.kind = kind;
   }
 
-  accept(visitor: Visitor): void {}
+  accept(visitor: Visitor, ambit:SymTable | null): void {}
 } */
 
 abstract class Expr extends Node {
@@ -133,7 +133,7 @@ abstract class Expr extends Node {
     this.type = type;
     this.value = null;
   }
-  accept(visitor: Visitor): void {}
+  accept(visitor: Visitor, ambit: SymTable | null): void {}
 }
 
 export class BinaryExpression extends Expr {
@@ -152,9 +152,9 @@ export class BinaryExpression extends Expr {
     this.operator = operator;
     this.right = right;
   }
-  override accept(visitor: Visitor): void {
-    this.left.accept(visitor);
-    this.right.accept(visitor);
+  override accept(visitor: Visitor, ambit: SymTable | null): void {
+    this.left.accept(visitor, ambit);
+    this.right.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
@@ -175,11 +175,11 @@ export class UnaryExpression extends Expr {
     this.argument = argument;
   }
 
-  override accept(visitor: Visitor): void {
+  override accept(visitor: Visitor, ambit: SymTable | null): void {
     if (this.argument.constructor.name === Identifier.name) {
-      (this.argument as Identifier).accept(visitor);
+      (this.argument as Identifier).accept(visitor, ambit);
     } else if (this.argument.constructor.name === CallFunction.name) {
-      (this.argument as CallFunction).accept(visitor);
+      (this.argument as CallFunction).accept(visitor, ambit);
     }
     visitor.visit(this);
   }
@@ -195,9 +195,9 @@ export class Assignment extends Node {
     this.expression = expression;
   }
 
-  accept(visitor: Visitor): void {
-    this.id.accept(visitor);
-    this.expression.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    this.id.accept(visitor, ambit);
+    this.expression.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
@@ -212,11 +212,23 @@ export class CallFunction extends Node {
     this.args = args;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     for (let exprs of this.args) {
-      exprs.accept(visitor);
+      exprs.accept(visitor, ambit);
     }
     visitor.visit(this);
+  }
+
+  getTableName(): string {
+    let funcTypes = this.args.reduce((previus, current) => {
+      let currVal = current.type === null ? 'null' : current.type.toString();
+      if (previus.length === 0) {
+        return currVal;
+      } else {
+        return `${previus},${currVal}`;
+      }
+    }, '');
+    return `${this.callee}(${funcTypes})`;
   }
 }
 
@@ -229,8 +241,8 @@ export class functionParam extends Node {
     this.id = id;
   }
 
-  accept(visitor: Visitor): void {
-    this.id.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    this.id.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
@@ -241,20 +253,20 @@ export class returnStmt extends Node {
     super(loc);
     this.argument = argument;
   }
-  accept(visitor: Visitor): void {
-    if (this.argument !== null) this.argument.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (this.argument !== null) this.argument.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
 
 export class continueStmt extends Node {
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }
 
 export class breakStmt extends Node {
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }
@@ -283,21 +295,21 @@ export class functionDeclaration extends Node {
     this.table = new SymTable(`función ${id}`);
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       for (let child of this.params) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     } else {
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, this.table);
       }
       for (let child of this.params) {
-        child.accept(visitor);
+        child.accept(visitor, this.table);
       }
       visitor.visit(this);
     }
@@ -324,15 +336,15 @@ export class functionMain extends Node {
     this.table = new SymTable('Main()');
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     } else {
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, this.table);
       }
       visitor.visit(this);
     }
@@ -354,24 +366,24 @@ export class IfStmt extends Node {
     this.tableAlternate = new SymTable('Sino');
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.test.accept(visitor);
+      this.test.accept(visitor, ambit);
       for (let child of this.consequent) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
       for (let child of this.alternate) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     } else {
       for (let child of this.consequent) {
-        child.accept(visitor);
+        child.accept(visitor, this.table);
       }
       for (let child of this.alternate) {
-        child.accept(visitor);
+        child.accept(visitor, this.tableAlternate);
       }
-      this.test.accept(visitor);
+      this.test.accept(visitor, ambit);
       visitor.visit(this);
     }
   }
@@ -399,20 +411,20 @@ export class forStmt extends Node {
     this.table = new SymTable('Para');
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.init.accept(visitor);
-      this.test.accept(visitor);
+      this.init.accept(visitor, ambit);
+      this.test.accept(visitor, ambit);
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     } else {
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, this.table);
       }
-      this.init.accept(visitor);
-      this.test.accept(visitor);
+      this.init.accept(visitor, ambit);
+      this.test.accept(visitor, this.table);
       visitor.visit(this);
     }
   }
@@ -429,18 +441,18 @@ export class whileStmt extends Node {
     this.table = new SymTable('Mientras');
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.test.accept(visitor);
+      this.test.accept(visitor, ambit);
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     } else {
       for (let child of this.body) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
-      this.test.accept(visitor);
+      this.test.accept(visitor, ambit);
       visitor.visit(this);
     }
   }
@@ -457,10 +469,10 @@ export class Mostrar extends Node {
     this.expressions = expressions;
   }
 
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     if (this.expressions !== null) {
       for (let child of this.expressions) {
-        child.accept(visitor);
+        child.accept(visitor, ambit);
       }
     }
     visitor.visit(this);
@@ -474,8 +486,8 @@ export class DibujarAST extends Node {
     this.id = id;
   }
 
-  accept(visitor: Visitor): void {
-    this.id.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    this.id.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
@@ -487,14 +499,14 @@ export class DibujarEXP extends Node {
     this.expression = expression;
   }
 
-  accept(visitor: Visitor): void {
-    this.expression.accept(visitor);
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    this.expression.accept(visitor, ambit);
     visitor.visit(this);
   }
 }
 
 export class DibujarTS extends Node {
-  accept(visitor: Visitor): void {
+  accept(visitor: Visitor, ambit: SymTable | null): void {
     visitor.visit(this);
   }
 }

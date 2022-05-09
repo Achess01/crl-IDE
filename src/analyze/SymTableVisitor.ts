@@ -6,6 +6,11 @@ import {
   whileStmt,
   forStmt,
   IfStmt,
+  returnStmt,
+  Mostrar,
+  DibujarAST,
+  Node,
+  DibujarEXP
 } from 'src/astMembers/Node';
 import Visitor from './Visitor';
 import { CheckUndefinedGlobalVisitor } from './SymTableVisitorGlobal';
@@ -13,6 +18,11 @@ import logError from 'src/errors/LogError';
 
 class SymTableVisitor extends Visitor {
   visitBlock(node: functionDeclaration | functionMain | whileStmt | forStmt) {
+    let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+    if (node.constructor.name === forStmt.name) {      
+      (node as forStmt).test.accept(checkUndefined, null);
+    }
+
     for (let child of node.body) {
       switch (child.constructor.name) {
         case IfStmt.name:
@@ -26,8 +36,7 @@ class SymTableVisitor extends Visitor {
           (child as whileStmt).table.addUpperAmbit(node.table);
           break;
       }
-
-      let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+      
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
@@ -36,11 +45,11 @@ class SymTableVisitor extends Visitor {
             `El identificador '${variable.id.name}' ya está definido`
           );
         } else {
-          variable.init?.accept(checkUndefined);
+          variable.init?.accept(checkUndefined, null);
         }
-      } else if (child.constructor.name === Assignment.name) {
-        (child as Assignment).accept(checkUndefined);
       }
+
+      this.testChildNode(child, checkUndefined);
     }
   }
 
@@ -78,29 +87,58 @@ class SymTableVisitor extends Visitor {
             `El identificador '${variable.id.name}' ya está definido`
           );
         } else {
-          variable.init?.accept(checkUndefined);
+          variable.init?.accept(checkUndefined, null);
         }
-      } else if (child.constructor.name === Assignment.name) {
-        (child as Assignment).accept(checkUndefined);
       }
+
+      this.testChildNode(child, checkUndefined);
     }
 
     for (let child of node.alternate) {
-        let checkUndefined = new CheckUndefinedGlobalVisitor(node.tableAlternate);
-        if (child.constructor.name === VariableDeclarator.name) {
-          let variable = child as VariableDeclarator;
-          if (!node.tableAlternate.addVariable(variable)) {
-            logError(
-              variable.id.loc,
-              `El identificador '${variable.id.name}' ya está definido`
-            );
-          } else {
-            variable.init?.accept(checkUndefined);
-          }
-        } else if (child.constructor.name === Assignment.name) {
-          (child as Assignment).accept(checkUndefined);
+      let checkUndefined = new CheckUndefinedGlobalVisitor(node.tableAlternate);
+      if (child.constructor.name === VariableDeclarator.name) {
+        let variable = child as VariableDeclarator;
+        if (!node.tableAlternate.addVariable(variable)) {
+          logError(
+            variable.id.loc,
+            `El identificador '${variable.id.name}' ya está definido`
+          );
+        } else {
+          variable.init?.accept(checkUndefined, null);
         }
       }
+
+      this.testChildNode(child, checkUndefined);
+    }
+  }
+
+  testChildNode(child: Node, checkUndefined: CheckUndefinedGlobalVisitor){
+    switch(child.constructor.name){
+      case Assignment.name:
+        (child as Assignment).accept(checkUndefined, null);
+        break;
+      case forStmt.name:          
+        (child as forStmt).init.init?.accept(checkUndefined, null);          
+        break;
+      case whileStmt.name:
+        (child as whileStmt).test.accept(checkUndefined, null);
+        break;
+      case IfStmt.name:
+        (child as IfStmt).test.accept(checkUndefined, null);
+        break;
+      case returnStmt.name:
+        (child as returnStmt).argument?.accept(checkUndefined, null);
+        break;
+      case Mostrar.name:
+        (child as Mostrar).expressions?.forEach(e => e.accept(checkUndefined, null));
+        break;    
+      case DibujarEXP.name:
+        (child as DibujarEXP).expression.accept(checkUndefined, null);
+        break;    
+      case DibujarAST.name:
+        checkUndefined.visit(child as DibujarAST);
+        break;
+    }
   }
 }
 

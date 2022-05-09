@@ -76,10 +76,10 @@ class SymTableGlobalVisitor extends Visitor {
             `El identificador '${variable.id.name}' ya está definido`
           );
         } else {
-          variable.init?.accept(checkUndefined);
+          variable.init?.accept(checkUndefined, null);
         }
       } else if (child.constructor.name === Assignment.name) {
-        (child as Assignment).accept(checkUndefined);
+        (child as Assignment).accept(checkUndefined, null);
       }
     }
   }
@@ -96,9 +96,16 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
     let variable = this.ambit.getVariable(node.name);     
     if (variable === undefined) {
       logError(node.loc, `La variable '${node.name}' no existe`);
-    } else if (variable.init === null || !variable.isParam) {
+    } else if (variable.init === null && !variable.isParam) {
       logError(node.loc, `La variable '${node.name}' no está inicializada`);
     }
+  }
+
+  override visitDibujarAST(node: DibujarAST): void {
+      let name = node.id.name;
+      if(!this.ambit.itExistsThisFunctionId(name)){
+        logError(node.loc, `No existe ninguna función '${name}'`);
+      }
   }
 }
 

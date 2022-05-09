@@ -30,15 +30,20 @@ Importar segundo3.crl
 Importar segundo4.crl     
 Incerteza 0.34
 
-String cadena2, cadena2 = "Hola", cadena3 = "amigos"
+String cadena1, cadena2 = "Hola", cadena3 = "amigos"
+
+Int getMax(Int n1, Int n2):
+
+    MostrarTS()
 
 
 Int getMax(Int n1, Int n2):
-    Si (n1 >= n2):
+    Si (noDefinido >= n2):
         DibujarTS()
         Retorno variable
         valor = 20 * valor2
-        Para(Int x = 0; x < 30; ++):
+        Para(Int x = valor2; i < 30; ++):
+            Int i = 20
             Si(x % 2 == 0):
                 Mostrar("Hola amigos {0}", x) 
                 Retorno x
