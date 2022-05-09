@@ -479,15 +479,15 @@ while_stmt
     ;
 
 show_stmt
-    : 'Mostrar' '(' string_literal ',' format_expressions_opt ')'
-    {$$ = new yy.Mostrar(@$, $3, $5);}
+    : 'Mostrar' '(' string_literal format_expressions_opt ')'
+    {$$ = new yy.Mostrar(@$, $3, $4);}
     ;
 
 format_expressions_opt
     : 
     {$$ = [];}
-    | format_expressions
-    {$$ = $1;}
+    | ',' format_expressions
+    {$$ = $2;}
     ;
 
 format_expressions

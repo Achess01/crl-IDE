@@ -6,6 +6,8 @@ import {
   LogicalExpression,
   UnaryExpression,
   CallFunction,
+  VariableDeclarator,
+  Assignment,
 } from '../astMembers/Node';
 import Visitor from './Visitor';
 
@@ -135,8 +137,8 @@ const exponentCast = [
   Type.Double,
 ];
 
-const stringErrorAssign = [];
-const doubleErrorAssign = [];
+const stringErrorAssign: Type[] = [];
+const doubleErrorAssign = [Type.String];
 const booleanErrorAssign = [Type.String, Type.Double, Type.Int, Type.Char];
 const intErrorAssign = [Type.String];
 const charErrorAssign = [Type.String, Type.Double, Type.Boolean];
@@ -149,7 +151,7 @@ class ExpressionsVisitor extends Visitor {
         node.loc,
         `La operación ${node.left.type} ${node.operator} ${node.right.type} no es posible`
       );
-    }else{
+    } else {
       node.type = newType;
     }
   }
@@ -182,16 +184,88 @@ class ExpressionsVisitor extends Visitor {
           );
         break;
       case '-':
-        let tp = this.getBinaryType(new UnaryExpression(null, Type.Int, '', 0), '-', node);
-        if(tp !== null){
+        let tp = this.getBinaryType(
+          new UnaryExpression(null, Type.Int, '', 0),
+          '-',
+          node
+        );
+        if (tp !== null) {
           node.type = tp;
-        }else{
+        } else {
           logError(
             node.loc,
             `La operación ${node.operator} ${node.type} es inválida`
           );
         }
         break;
+    }
+  }
+
+  override visitAssignment(node: Assignment): void {
+    let variable = this.ambit?.getVariable(node.id.name);
+    if (variable !== undefined) {
+      let errorType: (Type | null)[] = [];
+      switch (variable.type) {
+        case Type.String:
+          errorType = stringErrorAssign;
+          break;
+        case Type.Int:
+          errorType = intErrorAssign;
+          break;
+        case Type.Double:
+          errorType = doubleErrorAssign;
+          break;
+        case Type.Boolean:
+          errorType = booleanErrorAssign;
+          break;
+        case Type.Char:
+          errorType = charErrorAssign;
+          break;
+      }
+      if (
+        errorType.length > 0 &&
+        node.expression.type !== null &&
+        errorType.includes(node.expression.type)
+      ) {
+        logError(
+          node.loc,
+          `La asignación ${variable.type} = ${node.expression.type} no está permitida`
+        );
+      }
+    }
+  }
+
+  override visitVariableDeclarator(node: VariableDeclarator): void {
+    if (node.init !== null) {
+      let errorType: (Type | null)[] = [];
+      switch (node.type) {
+        case Type.String:
+          errorType = stringErrorAssign;
+          break;
+        case Type.Int:
+          errorType = intErrorAssign;
+          break;
+        case Type.Double:
+          errorType = doubleErrorAssign;
+          break;
+        case Type.Boolean:
+          errorType = booleanErrorAssign;
+          break;
+        case Type.Char:
+          errorType = charErrorAssign;
+          break;
+      }
+      if (
+        errorType.length > 0 &&
+        node.init !== null &&
+        node.init.type !== null &&
+        errorType.includes(node.init.type)
+      ) {
+        logError(
+          node.loc,
+          `La asignación ${node.type} = ${node.init.type} no está permitida`
+        );
+      }
     }
   }
 
@@ -232,7 +306,11 @@ class ExpressionsVisitor extends Visitor {
         }
       }
     } else {
-      if (left.type === right.type || (left.type === Type.Int && right.type === Type.Double) || (left.type === Type.Double && right.type === Type.Int)) {
+      if (
+        left.type === right.type ||
+        (left.type === Type.Int && right.type === Type.Double) ||
+        (left.type === Type.Double && right.type === Type.Int)
+      ) {
         return Type.Boolean;
       }
     }
