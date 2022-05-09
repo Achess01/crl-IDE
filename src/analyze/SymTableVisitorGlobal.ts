@@ -86,14 +86,9 @@ class SymTableGlobalVisitor extends Visitor {
 }
 
 export class CheckUndefinedGlobalVisitor extends Visitor {
-  ambit: SymTable;
-  constructor(ambit: SymTable) {
-    super();
-    this.ambit = ambit;
-  }
-
+    
   override visitIdentifier(node: Identifier): void {
-    let variable = this.ambit.getVariable(node.name);     
+    let variable = this.ambit?.getVariable(node.name);     
     if (variable === undefined) {
       logError(node.loc, `La variable '${node.name}' no existe`);
     } else if (variable.init === null && !variable.isParam) {
@@ -103,8 +98,18 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
 
   override visitDibujarAST(node: DibujarAST): void {
       let name = node.id.name;
-      if(!this.ambit.itExistsThisFunctionId(name)){
+      if(!this.ambit?.itExistsThisFunctionId(name)){
         logError(node.loc, `No existe ninguna función '${name}'`);
+      }
+  }
+
+  override visitUnaryExpression(node: UnaryExpression): void {
+      if(node.argument.constructor.name === Identifier.name){
+        let name = (node.argument as Identifier).name;
+        let variable = this.ambit?.getVariable(name);
+        if(variable !== undefined){
+          node.type = variable.type;
+        }
       }
   }
 }

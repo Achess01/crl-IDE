@@ -1,3 +1,4 @@
+import { SymTable } from 'src/astMembers/SymbolTable';
 import {
   Node,
   Program,
@@ -26,6 +27,16 @@ import {
 } from '../astMembers/Node';
 
 abstract class Visitor {
+  ambit?: SymTable;
+
+  constructor(ambit?: SymTable){
+    this.ambit = ambit;
+  }
+
+  setAmbit(ambit: SymTable){
+    this.ambit = ambit;
+  }
+
   visit(node: Node): void {
     switch (node.constructor.name) {
       case Program.name:

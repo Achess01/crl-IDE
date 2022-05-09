@@ -20,7 +20,9 @@ export class Project extends Node {
     this.extraFiles = extraFiles;
   }
 
-  accept(visitor: Visitor, ambit: SymTable | null): void {}
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
+  }
 }
 
 export class Program extends Node {
@@ -36,6 +38,7 @@ export class Program extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     for (let child of this.body) {
       child.accept(visitor, ambit);
     }
@@ -51,6 +54,7 @@ export class ImportDeclaration extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
@@ -63,6 +67,7 @@ export class Incerteza extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
@@ -75,6 +80,7 @@ export class Identifier extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
@@ -107,6 +113,7 @@ export class VariableDeclarator extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (this.init !== null) this.init.accept(visitor, ambit);
     this.id.accept(visitor, ambit);
     visitor.visit(this);
@@ -125,7 +132,7 @@ export class VariableDeclarator extends Node {
   accept(visitor: Visitor, ambit:SymTable | null): void {}
 } */
 
-abstract class Expr extends Node {
+export abstract class Expr extends Node {
   type: Type | null;
   value: any;
   constructor(loc: any, type: Type | null) {
@@ -133,7 +140,9 @@ abstract class Expr extends Node {
     this.type = type;
     this.value = null;
   }
-  accept(visitor: Visitor, ambit: SymTable | null): void {}
+  accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
+  }
 }
 
 export class BinaryExpression extends Expr {
@@ -153,6 +162,7 @@ export class BinaryExpression extends Expr {
     this.right = right;
   }
   override accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);    
     this.left.accept(visitor, ambit);
     this.right.accept(visitor, ambit);
     visitor.visit(this);
@@ -176,6 +186,7 @@ export class UnaryExpression extends Expr {
   }
 
   override accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (this.argument.constructor.name === Identifier.name) {
       (this.argument as Identifier).accept(visitor, ambit);
     } else if (this.argument.constructor.name === CallFunction.name) {
@@ -196,6 +207,7 @@ export class Assignment extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     this.id.accept(visitor, ambit);
     this.expression.accept(visitor, ambit);
     visitor.visit(this);
@@ -213,6 +225,7 @@ export class CallFunction extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     for (let exprs of this.args) {
       exprs.accept(visitor, ambit);
     }
@@ -242,6 +255,7 @@ export class functionParam extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     this.id.accept(visitor, ambit);
     visitor.visit(this);
   }
@@ -254,6 +268,7 @@ export class returnStmt extends Node {
     this.argument = argument;
   }
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (this.argument !== null) this.argument.accept(visitor, ambit);
     visitor.visit(this);
   }
@@ -261,12 +276,14 @@ export class returnStmt extends Node {
 
 export class continueStmt extends Node {
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
 
 export class breakStmt extends Node {
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
@@ -296,6 +313,7 @@ export class functionDeclaration extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    visitor.setAmbit(this.table);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       for (let child of this.params) {
@@ -337,6 +355,7 @@ export class functionMain extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    visitor.setAmbit(this.table);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       for (let child of this.body) {
@@ -367,6 +386,7 @@ export class IfStmt extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if(ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       this.test.accept(visitor, ambit);
@@ -412,6 +432,7 @@ export class forStmt extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       this.init.accept(visitor, ambit);
@@ -442,6 +463,7 @@ export class whileStmt extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       this.test.accept(visitor, ambit);
@@ -470,6 +492,7 @@ export class Mostrar extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (this.expressions !== null) {
       for (let child of this.expressions) {
         child.accept(visitor, ambit);
@@ -487,6 +510,7 @@ export class DibujarAST extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     this.id.accept(visitor, ambit);
     visitor.visit(this);
   }
@@ -500,6 +524,7 @@ export class DibujarEXP extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     this.expression.accept(visitor, ambit);
     visitor.visit(this);
   }
@@ -507,6 +532,7 @@ export class DibujarEXP extends Node {
 
 export class DibujarTS extends Node {
   accept(visitor: Visitor, ambit: SymTable | null): void {
+    if (ambit !== null) visitor.setAmbit(ambit);
     visitor.visit(this);
   }
 }
