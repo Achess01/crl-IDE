@@ -111,6 +111,24 @@ const multiplicationCast = [
 ];
 
 
+const exponentCast = [
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  Type.Double,
+  undefined,
+  undefined,
+  undefined,
+  Type.Int,
+  Type.Int,
+  Type.Double 
+];
+
 class ExpressionsVisitor extends Visitor {
   override visitBinaryExpression(node: BinaryExpression): void {}
 }
