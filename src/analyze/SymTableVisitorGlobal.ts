@@ -93,8 +93,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
       logError(node.loc, `La variable '${node.name}' no existe`);
     } else if (variable.init === null && !variable.isParam) {
       logError(node.loc, `La variable '${node.name}' no está inicializada`);
-    }
-    console.log(node);
+    }    
   }
 
   override visitDibujarAST(node: DibujarAST): void {

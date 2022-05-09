@@ -232,7 +232,7 @@ class ExpressionsVisitor extends Visitor {
         }
       }
     } else {
-      if (left.type === right.type) {
+      if (left.type === right.type || (left.type === Type.Int && right.type === Type.Double) || (left.type === Type.Double && right.type === Type.Int)) {
         return Type.Boolean;
       }
     }
