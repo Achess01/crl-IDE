@@ -38,9 +38,9 @@ export class Program extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
-    if (ambit !== null) visitor.setAmbit(ambit);
+    visitor.setAmbit(this.table);
     for (let child of this.body) {
-      child.accept(visitor, ambit);
+      child.accept(visitor, this.table);
     }
     visitor.visit(this);
   }
@@ -140,9 +140,7 @@ export abstract class Expr extends Node {
     this.type = type;
     this.value = null;
   }
-  accept(visitor: Visitor, ambit: SymTable | null): void {
-    if (ambit !== null) visitor.setAmbit(ambit);
-  }
+  accept(visitor: Visitor, ambit: SymTable | null): void {}
 }
 
 export class BinaryExpression extends Expr {
@@ -162,7 +160,7 @@ export class BinaryExpression extends Expr {
     this.right = right;
   }
   override accept(visitor: Visitor, ambit: SymTable | null): void {
-    if (ambit !== null) visitor.setAmbit(ambit);    
+    if (ambit !== null) visitor.setAmbit(ambit);
     this.left.accept(visitor, ambit);
     this.right.accept(visitor, ambit);
     visitor.visit(this);
@@ -386,7 +384,7 @@ export class IfStmt extends Node {
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
-    if(ambit !== null) visitor.setAmbit(ambit);
+    if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
       this.test.accept(visitor, ambit);
@@ -426,6 +424,7 @@ export class forStmt extends Node {
     super(loc);
     this.body = body;
     this.init = init;
+    this.init.type = Type.Int;
     this.test = test;
     this.update = update;
     this.table = new SymTable('Para');

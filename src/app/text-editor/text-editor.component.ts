@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
 import SymTableVisitor from 'src/analyze/SymTableVisitor';
+import ExpressionsVisitor from 'src/analyze/ExpressionsVisitor';
 
 @Component({
   selector: 'app-text-editor',
@@ -32,24 +33,24 @@ Incerteza 0.34
 
 String cadena1, cadena2 = "Hola", cadena3 = "amigos"
 
-Int getMax(Int n1, Int n2):
-
+Int getMax(String n1, Int n2):
+    Boolean v = n1 == n2 
     MostrarTS()
 
 
 Int getMax(Int n1, Int n2):
-    Si (noDefinido >= n2):
+    Si (n1 >= n2):
         DibujarTS()
         Retorno variable
-        valor = 20 * valor2
-        Para(Int x = valor2; i < 30; ++):
+        Int valor = 20 * "valor2"
+        Para(Int x = valor; x < 30; ++):
             Int i = 20
             Si(x % 2 == 0):
                 Mostrar("Hola amigos {0}", x) 
                 Retorno x
     Sino:
         Retorno n2    
-    Int entero0, entero, entero2 = 3234 + entero, entero = 234 + 34 +98 + 1000 * 2
+    Int entero0, entero, entero2 = 3234, entero3 = 234 + 34 +98 + 1000 * 2
     `
   }
 
@@ -63,6 +64,7 @@ Int getMax(Int n1, Int n2):
     let visitorTable = new SymTableGlobalVisitor();
     visitorTable.visit(tree);
     tree.accept(new SymTableVisitor());
+    tree.accept(new ExpressionsVisitor());
     console.log(tree);
   }
 }

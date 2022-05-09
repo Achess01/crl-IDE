@@ -149,6 +149,8 @@ class ExpressionsVisitor extends Visitor {
         node.loc,
         `La operación ${node.left.type} ${node.operator} ${node.right.type} no es posible`
       );
+    }else{
+      node.type = newType;
     }
   }
 
