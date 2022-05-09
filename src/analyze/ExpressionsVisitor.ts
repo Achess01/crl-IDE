@@ -1,7 +1,7 @@
 import { BinaryExpression, Type } from '../astMembers/Node';
 import Visitor from './Visitor';
 
-export const combinations = [
+const combinations = [
   `${Type.Boolean}-${Type.Boolean}`,
   `${Type.Boolean}-${Type.Double}`,
   `${Type.Boolean}-${Type.String}`,
@@ -19,7 +19,7 @@ export const combinations = [
   `${Type.Char}-${Type.Char}`,
 ];
 
-export const additionCast = [
+const additionCast = [
   Type.Double,
   Type.Double,
   Type.String,
@@ -36,6 +36,81 @@ export const additionCast = [
   Type.Int,
   Type.Int 
 ];
+
+const subtractionCast = [
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Int,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  Type.Double,
+  undefined,
+  undefined,
+  undefined,
+  Type.Int,
+  Type.Int,
+  Type.Int 
+];
+
+const divisionCast = [
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  Type.Double,
+  undefined,
+  undefined,
+  undefined,
+  Type.Double,
+  Type.Double,
+  Type.Double 
+];
+
+
+const modCast = [
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  Type.Double,
+  undefined,
+  undefined,
+  undefined,
+  Type.Double,
+  Type.Double,
+  Type.Double 
+];
+
+const multiplicationCast = [
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Int,
+  undefined,
+  Type.Double,
+  undefined,
+  Type.Double,
+  Type.Double,
+  undefined,
+  undefined,
+  undefined,
+  Type.Int,
+  Type.Int,
+  Type.Int 
+];
+
+
 class ExpressionsVisitor extends Visitor {
   override visitBinaryExpression(node: BinaryExpression): void {}
 }
