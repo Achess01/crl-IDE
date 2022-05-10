@@ -1,5 +1,10 @@
 function logError(loc: any, info:string){
-    let message = `Error ln:${loc.first_line} col:${loc.first_column} ${info}`;
+  let message = "";
+  if(loc !== {}){
+    message = `Error ln:${loc.first_line} col:${loc.first_column} ${info}`;
+  }else{
+    message = info;
+  }
     console.log(message);
 }
 
