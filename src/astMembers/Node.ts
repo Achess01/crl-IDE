@@ -11,19 +11,18 @@ export abstract class Node {
   abstract accept(visitor: Visitor, ambit: SymTable | null): void;
 }
 
-export class Project extends Node {
-  extraFiles: Program[];
-  main: Program;
-  constructor(loc: any, main: Program, extraFiles: Program[]) {
-    super(loc);
-    this.main = main;
-    this.extraFiles = extraFiles;
+/* export class Project extends Node {
+  files: Program[];  
+  main?: Program;
+  constructor(loc: any, files: Program[]) {
+    super(loc);    
+    this.files = files;
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {
     if (ambit !== null) visitor.setAmbit(ambit);
   }
-}
+} */
 
 export class Program extends Node {
   body: Node[];
