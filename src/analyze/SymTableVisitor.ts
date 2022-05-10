@@ -26,14 +26,17 @@ class SymTableVisitor extends Visitor {
     for (let child of node.body) {
       switch (child.constructor.name) {
         case IfStmt.name:
-          (child as IfStmt).table.addUpperAmbit(node.table);
+          (child as IfStmt).table.addUpperAmbit(node.table);          
           (child as IfStmt).tableAlternate.addUpperAmbit(node.table);
+          (child as IfStmt).accept(this, null);
           break;
         case forStmt.name:
           (child as forStmt).table.addUpperAmbit(node.table);
+          (child as forStmt).accept(this, null);
           break;
         case whileStmt.name:
           (child as whileStmt).table.addUpperAmbit(node.table);
+          (child as whileStmt).accept(this, null);
           break;
       }
       

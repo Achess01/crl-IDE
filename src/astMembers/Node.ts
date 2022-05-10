@@ -314,12 +314,6 @@ export class functionDeclaration extends Node {
     visitor.setAmbit(this.table);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      for (let child of this.params) {
-        child.accept(visitor, ambit);
-      }
-      for (let child of this.body) {
-        child.accept(visitor, ambit);
-      }
     } else {
       for (let child of this.body) {
         child.accept(visitor, this.table);
@@ -356,9 +350,6 @@ export class functionMain extends Node {
     visitor.setAmbit(this.table);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      for (let child of this.body) {
-        child.accept(visitor, ambit);
-      }
     } else {
       for (let child of this.body) {
         child.accept(visitor, this.table);
@@ -387,13 +378,6 @@ export class IfStmt extends Node {
     if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.test.accept(visitor, ambit);
-      for (let child of this.consequent) {
-        child.accept(visitor, ambit);
-      }
-      for (let child of this.alternate) {
-        child.accept(visitor, ambit);
-      }
     } else {
       for (let child of this.consequent) {
         child.accept(visitor, this.table);
@@ -434,11 +418,6 @@ export class forStmt extends Node {
     if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.init.accept(visitor, ambit);
-      this.test.accept(visitor, ambit);
-      for (let child of this.body) {
-        child.accept(visitor, ambit);
-      }
     } else {
       for (let child of this.body) {
         child.accept(visitor, this.table);
@@ -465,10 +444,6 @@ export class whileStmt extends Node {
     if (ambit !== null) visitor.setAmbit(ambit);
     if (visitor.constructor.name === SymTableVisitor.name) {
       visitor.visit(this);
-      this.test.accept(visitor, ambit);
-      for (let child of this.body) {
-        child.accept(visitor, ambit);
-      }
     } else {
       for (let child of this.body) {
         child.accept(visitor, ambit);
