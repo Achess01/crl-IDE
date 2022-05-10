@@ -14,6 +14,10 @@ export class SymTable {
     this.upperAmbit = upperTable;
   }
 
+  reAssignVariable(){
+    
+  }
+
   getVariable(id: string): VariableDeclarator | undefined {
     let variable = this.symbolVars[id];
     if (variable !== undefined) {

@@ -24,21 +24,7 @@ class SymTableVisitor extends Visitor {
     }
 
     for (let child of node.body) {
-      switch (child.constructor.name) {
-        case IfStmt.name:
-          (child as IfStmt).table.addUpperAmbit(node.table);          
-          (child as IfStmt).tableAlternate.addUpperAmbit(node.table);
-          (child as IfStmt).accept(this, null);
-          break;
-        case forStmt.name:
-          (child as forStmt).table.addUpperAmbit(node.table);
-          (child as forStmt).accept(this, null);
-          break;
-        case whileStmt.name:
-          (child as whileStmt).table.addUpperAmbit(node.table);
-          (child as whileStmt).accept(this, null);
-          break;
-      }
+      this.addUpperAmbit(child, node);
       
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
@@ -82,6 +68,7 @@ class SymTableVisitor extends Visitor {
   override visitIfStmt(node: IfStmt): void {
     for (let child of node.consequent) {
       let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+      this.addUpperAmbit(child, node);
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
@@ -99,6 +86,7 @@ class SymTableVisitor extends Visitor {
 
     for (let child of node.alternate) {
       let checkUndefined = new CheckUndefinedGlobalVisitor(node.tableAlternate);
+      this.addUpperAmbit(child, node);
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.tableAlternate.addVariable(variable)) {
@@ -115,10 +103,28 @@ class SymTableVisitor extends Visitor {
     }
   }
 
+  addUpperAmbit(child: Node, father: IfStmt | forStmt | whileStmt | functionDeclaration | functionMain){    
+      switch (child.constructor.name) {
+        case IfStmt.name:
+          (child as IfStmt).table.addUpperAmbit(father.table);          
+          (child as IfStmt).tableAlternate.addUpperAmbit(father.table);
+          (child as IfStmt).accept(this, null);
+          break;
+        case forStmt.name:
+          (child as forStmt).table.addUpperAmbit(father.table);
+          (child as forStmt).accept(this, null);
+          break;
+        case whileStmt.name:
+          (child as whileStmt).table.addUpperAmbit(father.table);
+          (child as whileStmt).accept(this, null);
+          break;
+      }
+  }
+
   testChildNode(child: Node, checkUndefined: CheckUndefinedGlobalVisitor){
     switch(child.constructor.name){
       case Assignment.name:
-        (child as Assignment).accept(checkUndefined, null);
+        checkUndefined.visit(child as Assignment);
         break;
       case forStmt.name:          
         (child as forStmt).init.init?.accept(checkUndefined, null);          

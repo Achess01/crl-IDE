@@ -79,7 +79,8 @@ class SymTableGlobalVisitor extends Visitor {
           variable.init?.accept(checkUndefined, null);
         }
       } else if (child.constructor.name === Assignment.name) {
-        (child as Assignment).accept(checkUndefined, null);
+        checkUndefined.visit(child as Assignment);
+        //(child as Assignment).accept(checkUndefined, null);        
       }
     }
   }
@@ -94,6 +95,14 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
     } else if (variable.init === null && !variable.isParam) {
       logError(node.loc, `La variable '${node.name}' no está inicializada`);
     }    
+  }
+
+  override visitAssignment(node: Assignment): void {
+    let variable = this.ambit?.getVariable(node.id.name);
+    if (variable === undefined) {
+      logError(node.loc, `La variable '${node.id.name}' no existe`);
+    }
+    node.expression.accept(this, null);
   }
 
   override visitDibujarAST(node: DibujarAST): void {
