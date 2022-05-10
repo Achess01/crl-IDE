@@ -101,6 +101,8 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
     let variable = this.ambit?.getVariable(node.id.name);
     if (variable === undefined) {
       logError(node.loc, `La variable '${node.id.name}' no existe`);
+    }else{
+      if(variable.init === null) variable.init = node.expression;
     }
     node.expression.accept(this, null);
   }

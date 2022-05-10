@@ -37,6 +37,7 @@ Int getMax(String n1, Int n2):
     Boolean v = n1 == n2 
     MostrarTS()
 
+        !!Hola perro
 
 Int getMax(Int n1, Int n2):
     Si (n1 >= n2):
@@ -44,10 +45,15 @@ Int getMax(Int n1, Int n2):
         Retorno variable
         Int valor = 20 * "valor2"
         Para(Int x = valor; x < 30; ++):
+            Int num3
+            num3 = 0
             Int i = 20
-            Si(x % 2 == 0):
-                Mostrar("Hola amigos {0}", x) 
+            Si(x % 2 == num3):
+                Mostrar("Hola amigos {0}", caracter) 
                 Retorno x
+        Char caracter
+        caracter = 'm'
+        Int num3 = 234
     Sino:
         Retorno n2    
     Int entero0, entero, entero2 = 3234, entero3 = 234 + 34 +98 + 1000 * 2
