@@ -144,6 +144,15 @@ const intErrorAssign = [Type.String];
 const charErrorAssign = [Type.String, Type.Double, Type.Boolean];
 
 class ExpressionsVisitor extends Visitor {
+  override visitCallFunction(node: CallFunction): void {
+    if (this.ambit) {
+      let func = this.ambit.getFunction(node.getTableName(), this.global);
+      if (!func) {
+        logError(node.loc, `La función ${node.getTableName()} no existe`);
+      }
+    }
+  }
+
   override visitBinaryExpression(node: BinaryExpression): void {
     let newType = this.getBinaryType(node.left, node.operator, node.right);
     if (newType === null) {
@@ -167,8 +176,8 @@ class ExpressionsVisitor extends Visitor {
 
   override visitUnaryExpression(node: UnaryExpression): void {
     if (node.argument.constructor.name === CallFunction.name) {
+      let cf = node.argument as CallFunction;
       if (this.ambit !== undefined) {
-        let cf = node.argument as CallFunction;
         let func = this.ambit.getFunction(cf.getTableName(), this.global);
         if (func !== undefined) {
           node.type = func.type;

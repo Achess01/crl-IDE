@@ -10,17 +10,8 @@ import * as deepAssing from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
   override visitCallFunction(node: CallFunction): void {
-    let funcTypes = node.args.reduce((previus, current) => {
-      if (previus.length === 0 && current.type) {
-        return current.type.toString();
-      } else if (current.type) {
-        return `${previus},${current.type.toString()}`;
-      }
-      return previus;
-    }, '');
-
-    let funcName = `${node.callee}(${funcTypes})`;
-    let func = this.ambit?.getFunction(funcName);
+    console.log(node.getTableName());
+    //let func = this.ambit?.getFunction(funcName);
     /* if(func && this.ambit){
       //let newFunc = deepAssing({}, func);
       let newFunc = Object.assign({}, func);
@@ -29,8 +20,6 @@ class ExecuteVisitor extends Visitor {
       //if(newFunc.table.upperAmbit) newFunc.table.upperAmbit.name="HOLAA";            
       console.log(newFunc);            
     } */
-    console.log(this.global);
-    console.log(node);
   }
 
   override visitIfStmt(node: IfStmt): void {

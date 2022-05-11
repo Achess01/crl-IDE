@@ -214,6 +214,7 @@ export class Assignment extends Node {
 export class CallFunction extends Node {
   callee: string;
   args: Expr[];
+  returnedValue?: number | string | boolean;
 
   constructor(loc: any, callee: string, args: Expr[]) {
     super(loc);

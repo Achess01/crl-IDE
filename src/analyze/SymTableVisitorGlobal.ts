@@ -86,7 +86,7 @@ class SymTableGlobalVisitor extends Visitor {
 }
 
 export class CheckUndefinedGlobalVisitor extends Visitor {
-    
+      
   override visitIdentifier(node: Identifier): void {
     let variable = this.ambit?.getVariable(node.name, this.global);     
     if (variable === undefined) {
@@ -119,7 +119,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
         let variable = this.ambit?.getVariable(name, this.global);
         if(variable !== undefined){
           node.type = variable.type;
-        }
+        }        
       }
   }
 }
