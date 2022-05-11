@@ -10,6 +10,14 @@ export class SymTable {
     this.upperAmbit = null;
   }
 
+  getSymbolVars(){
+    return this.symbolVars;
+  }
+
+  setSymbolVars(symbolVars: { [id: string]: VariableDeclarator }){
+    this.symbolVars = symbolVars;
+  }
+
   addUpperAmbit(upperTable: SymTable) {
     this.upperAmbit = upperTable;
   }
@@ -18,26 +26,28 @@ export class SymTable {
     
   }
 
-  getVariable(id: string): VariableDeclarator | undefined {
+  getVariable(id: string, global?:SymTable): VariableDeclarator | undefined {
     let variable = this.symbolVars[id];
     if (variable !== undefined) {
       return variable;
-    } else if (this.upperAmbit !== null) {
-      let higherVariable = this.upperAmbit.getVariable(id);
-      return higherVariable;
+    } else if (this.upperAmbit !== null && this.upperAmbit.getVariable(id)) {
+      return this.upperAmbit.getVariable(id);      
+    }else if(global){
+      return global.getVariable(id);
     }
     return undefined;
   }
 
-  getFunction(id: string): functionDeclaration | undefined {
+  getFunction(id: string, global?:SymTable): functionDeclaration | undefined {
     let reg = /\(.+\)/;
     let generalId = id.replace(reg, '');
     let funcs = this.symbolFuncs[generalId];
     if (funcs !== undefined && funcs[id] !== undefined) {
       return funcs[id];
-    } else if (this.upperAmbit !== null) {
-      let higherFunc = this.upperAmbit.getFunction(id);
-      return higherFunc;
+    } else if (this.upperAmbit !== null &&this.upperAmbit.getFunction(id)) {      
+      return this.upperAmbit.getFunction(id);
+    }else if(global){
+      return global.getFunction(id);
     }
     return undefined;
   }

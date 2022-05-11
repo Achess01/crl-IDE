@@ -1,5 +1,12 @@
-import { CallFunction, functionDeclaration, functionMain } from 'src/astMembers/Node';
+import {
+  CallFunction,
+  functionDeclaration,
+  functionMain,
+  IfStmt,
+  Mostrar,
+} from 'src/astMembers/Node';
 import Visitor from './Visitor';
+import * as deepAssing from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
   override visitCallFunction(node: CallFunction): void {
@@ -14,14 +21,25 @@ class ExecuteVisitor extends Visitor {
 
     let funcName = `${node.callee}(${funcTypes})`;
     let func = this.ambit?.getFunction(funcName);
-    if(func && this.ambit){
+    /* if(func && this.ambit){
+      //let newFunc = deepAssing({}, func);
       let newFunc = Object.assign({}, func);
-      //if(newFunc.table.upperAmbit) newFunc.table.upperAmbit.name="HOLAA";
-      newFunc.table = Object.assign({}, func.table);
-      func.id = `${func.id}-viejo`;      
-      console.log(newFunc);
-    }
+      newFunc.params = deepAssing({}, func.params);
+      newFunc.table.setSymbolVars(deepAssing({}, func.table.getSymbolVars()));
+      //if(newFunc.table.upperAmbit) newFunc.table.upperAmbit.name="HOLAA";            
+      console.log(newFunc);            
+    } */
+    console.log(this.global);
     console.log(node);
+  }
+
+  override visitIfStmt(node: IfStmt): void {
+    console.log(this.ambit);
+  }
+
+  override visitMostrar(node: Mostrar): void {
+    console.log('Mostrar ambit');
+    console.log(this.ambit);
   }
 
   override visitfunctionMain(node: functionMain): void {}

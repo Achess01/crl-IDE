@@ -76,10 +76,10 @@ Int getMax(Int n1, Int n2):
     let tree = ast(this.content);    
     let visitorTable = new SymTableGlobalVisitor();
     visitorTable.visit(tree);
-    tree.accept(new SymTableVisitor());
-    tree.accept(new ExpressionsVisitor());
+    tree.accept(new SymTableVisitor().setGlobal(tree.table));
+    tree.accept(new ExpressionsVisitor().setGlobal(tree.table));
     if((tree as Program).main !== null){
-      (tree as Program).main?.accept(new ExecuteVisitor(), null);
+      (tree as Program).main?.accept(new ExecuteVisitor().setGlobal(tree.table), null);
     }
     console.log(tree);
   }

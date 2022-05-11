@@ -27,14 +27,21 @@ import {
 } from '../astMembers/Node';
 
 abstract class Visitor {
+  global: SymTable;
   ambit?: SymTable;
 
   constructor(ambit?: SymTable){
     this.ambit = ambit;
+    this.global = new SymTable('base');
   }
 
   setAmbit(ambit: SymTable){
     this.ambit = ambit;
+  }
+
+  setGlobal(global: SymTable){
+    this.global = global;
+    return this;
   }
 
   visit(node: Node): void {

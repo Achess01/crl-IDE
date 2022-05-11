@@ -25,7 +25,6 @@ import {
 } from '../astMembers/Node';
 import Visitor from './Visitor';
 import logError from '../errors/LogError';
-import { SymTable } from 'src/astMembers/SymbolTable';
 
 class SymTableGlobalVisitor extends Visitor {
   override visitProgram(node: Program): void {
@@ -56,14 +55,14 @@ class SymTableGlobalVisitor extends Visitor {
         node.incerteza = value;
       }
 
-      switch (child.constructor.name) {
+      /* switch (child.constructor.name) {
         case functionDeclaration.name:
           (child as functionDeclaration).table.addUpperAmbit(node.table);
           break;
         case functionMain.name:
           (child as functionMain).table.addUpperAmbit(node.table);
           break;        
-      }
+      } */
     }
     /* Then adding variables and comprobing the use of undefined variables */
     for (let child of node.body) {
@@ -89,7 +88,7 @@ class SymTableGlobalVisitor extends Visitor {
 export class CheckUndefinedGlobalVisitor extends Visitor {
     
   override visitIdentifier(node: Identifier): void {
-    let variable = this.ambit?.getVariable(node.name);     
+    let variable = this.ambit?.getVariable(node.name, this.global);     
     if (variable === undefined) {
       logError(node.loc, `La variable '${node.name}' no existe`);
     } else if (variable.init === null && !variable.isParam) {
@@ -98,7 +97,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
   }
 
   override visitAssignment(node: Assignment): void {
-    let variable = this.ambit?.getVariable(node.id.name);
+    let variable = this.ambit?.getVariable(node.id.name, this.global);
     if (variable === undefined) {
       logError(node.loc, `La variable '${node.id.name}' no existe`);
     }else{
@@ -117,7 +116,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
   override visitUnaryExpression(node: UnaryExpression): void {
       if(node.argument.constructor.name === Identifier.name){
         let name = (node.argument as Identifier).name;
-        let variable = this.ambit?.getVariable(name);
+        let variable = this.ambit?.getVariable(name, this.global);
         if(variable !== undefined){
           node.type = variable.type;
         }

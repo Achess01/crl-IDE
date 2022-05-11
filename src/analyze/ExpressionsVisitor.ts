@@ -169,7 +169,7 @@ class ExpressionsVisitor extends Visitor {
     if (node.argument.constructor.name === CallFunction.name) {
       if (this.ambit !== undefined) {
         let cf = node.argument as CallFunction;
-        let func = this.ambit.getFunction(cf.getTableName());
+        let func = this.ambit.getFunction(cf.getTableName(), this.global);
         if (func !== undefined) {
           node.type = func.type;
         }
@@ -202,7 +202,7 @@ class ExpressionsVisitor extends Visitor {
   }
 
   override visitAssignment(node: Assignment): void {
-    let variable = this.ambit?.getVariable(node.id.name);
+    let variable = this.ambit?.getVariable(node.id.name, this.global);
     if (variable !== undefined) {
       let errorType: (Type | null)[] = [];
       switch (variable.type) {

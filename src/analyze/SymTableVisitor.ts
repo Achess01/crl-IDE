@@ -19,7 +19,7 @@ import logError from 'src/errors/LogError';
 
 class SymTableVisitor extends Visitor {
   visitBlock(node: functionDeclaration | functionMain | whileStmt | forStmt) {
-    let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+    let checkUndefined = new CheckUndefinedGlobalVisitor(node.table).setGlobal(this.global);
     if (node.constructor.name === forStmt.name) {
       (node as forStmt).test.accept(checkUndefined, null);
     }
@@ -68,7 +68,7 @@ class SymTableVisitor extends Visitor {
 
   override visitIfStmt(node: IfStmt): void {
     for (let child of node.consequent) {
-      let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+      let checkUndefined = new CheckUndefinedGlobalVisitor(node.table).setGlobal(this.global);
       this.addUpperAmbit(child, node);
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
@@ -86,7 +86,7 @@ class SymTableVisitor extends Visitor {
     }
 
     for (let child of node.alternate) {
-      let checkUndefined = new CheckUndefinedGlobalVisitor(node.tableAlternate);
+      let checkUndefined = new CheckUndefinedGlobalVisitor(node.tableAlternate).setGlobal(this.global);
       this.addUpperAmbit(child, node);
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
