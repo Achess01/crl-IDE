@@ -9,24 +9,23 @@ import { Program } from 'src/astMembers/Node';
 @Component({
   selector: 'app-text-editor',
   templateUrl: './text-editor.component.html',
-  styleUrls: ['./text-editor.component.css']
+  styleUrls: ['./text-editor.component.css'],
 })
 export class TextEditorComponent implements OnInit {
-    content: string;
-  constructor() { 
-      this.content = "";
+  content: string;
+  constructor() {
+    this.content = '';
   }
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
-    lineWrapping: true,        
+    lineWrapping: true,
     autoCloseBrackets: true,
-    matchBrackets: true,    
+    matchBrackets: true,
   };
-  
+
   ngOnInit(): void {
-    this.content = 
-`Importar hola.crl
+    this.content = `Importar hola.crl
 Importar segundo1.crl 
 Importar segundo2.crl     
 Importar segundo3.crl 
@@ -41,7 +40,7 @@ Void Principal():
 
 Int getMax(String n1, Int n2):
     Boolean v = 2 == n2 
-    MostrarTS()
+    DibujarTS()
 
         !!Hola perro
 
@@ -63,7 +62,7 @@ Int getMax(Int n1, Int n2):
     Sino:
         Retorno n2    
     Int entero0, entero, entero2 = 3234, entero3 = 234 + 34 +98 + 1000 * 2
-    `
+    `;
   }
 
   /* setEditorContent(event: any) {
@@ -71,15 +70,24 @@ Int getMax(Int n1, Int n2):
     console.log(this.content);
   } */
 
-  onCompile(){    
-    
-    let tree = ast(this.content);    
+  onCompile() {
+    let tree = ast(this.content);
     let visitorTable = new SymTableGlobalVisitor();
     visitorTable.visit(tree);
-    tree.accept(new SymTableVisitor().setGlobal(tree.table));
-    tree.accept(new ExpressionsVisitor().setGlobal(tree.table));
-    if((tree as Program).main !== null){
-      (tree as Program).main?.accept(new ExecuteVisitor().setGlobal(tree.table), null);
+    let symT = new SymTableVisitor().setGlobal(tree.table);
+    tree.accept(symT);
+    let exprs = new ExpressionsVisitor().setGlobal(tree.table);
+    tree.accept(exprs);
+    if (
+      (tree as Program).main !== null &&
+      visitorTable.correct &&
+      symT.correct &&
+      exprs.correct
+    ) {
+      (tree as Program).main?.accept(
+        new ExecuteVisitor().setGlobal(tree.table),
+        null
+      );
     }
     console.log(tree);
   }

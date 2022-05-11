@@ -24,7 +24,6 @@ import {
   DibujarTS,
 } from '../astMembers/Node';
 import Visitor from './Visitor';
-import logError from '../errors/LogError';
 
 class SymTableGlobalVisitor extends Visitor {
   override visitProgram(node: Program): void {
@@ -33,7 +32,7 @@ class SymTableGlobalVisitor extends Visitor {
       if (child.constructor.name === functionDeclaration.name) {
         let func = child as functionDeclaration;
         if (!node.table.addFunc(func)) {
-          logError(
+          this.logError(
             func.loc,
             `La función ${
               func.nameForTable
@@ -43,7 +42,7 @@ class SymTableGlobalVisitor extends Visitor {
       } else if (child.constructor.name === functionMain.name) {
         let func = child as functionMain;
         if (node.main !== null) {
-          logError(
+          this.logError(
             func.loc,
             'Este archivo ya tiene una función Principal():Void'
           );
@@ -70,7 +69,7 @@ class SymTableGlobalVisitor extends Visitor {
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
-          logError(
+          this.logError(
             variable.id.loc,
             `El identificador '${variable.id.name}' ya está definido`
           );
@@ -90,16 +89,16 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
   override visitIdentifier(node: Identifier): void {
     let variable = this.ambit?.getVariable(node.name, this.global);     
     if (variable === undefined) {
-      logError(node.loc, `La variable '${node.name}' no existe`);
+      this.logError(node.loc, `La variable '${node.name}' no existe`);
     } else if (variable.init === null && !variable.isParam) {
-      logError(node.loc, `La variable '${node.name}' no está inicializada`);
+      this.logError(node.loc, `La variable '${node.name}' no está inicializada`);
     }    
   }
 
   override visitAssignment(node: Assignment): void {
     let variable = this.ambit?.getVariable(node.id.name, this.global);
     if (variable === undefined) {
-      logError(node.loc, `La variable '${node.id.name}' no existe`);
+      this.logError(node.loc, `La variable '${node.id.name}' no existe`);
     }else{
       if(variable.init === null) variable.init = node.expression;
     }
@@ -109,7 +108,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
   override visitDibujarAST(node: DibujarAST): void {
       let name = node.id.name;
       if(!this.ambit?.itExistsThisFunctionId(name)){
-        logError(node.loc, `No existe ninguna función '${name}'`);
+        this.logError(node.loc, `No existe ninguna función '${name}'`);
       }
   }
 

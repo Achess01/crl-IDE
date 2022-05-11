@@ -1,4 +1,3 @@
-import logError from 'src/errors/LogError';
 import {
   BinaryExpression,
   Type,
@@ -148,7 +147,7 @@ class ExpressionsVisitor extends Visitor {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (!func) {
-        logError(node.loc, `La función ${node.getTableName()} no existe`);
+        this.logError(node.loc, `La función ${node.getTableName()} no existe`);
       }
     }
   }
@@ -156,7 +155,7 @@ class ExpressionsVisitor extends Visitor {
   override visitBinaryExpression(node: BinaryExpression): void {
     let newType = this.getBinaryType(node.left, node.operator, node.right);
     if (newType === null) {
-      logError(
+      this.logError(
         node.loc,
         `La operación ${node.left.type} ${node.operator} ${node.right.type} no es posible`
       );
@@ -167,7 +166,7 @@ class ExpressionsVisitor extends Visitor {
 
   override visitLogicalExpression(node: LogicalExpression): void {
     if (node.left.type !== Type.Boolean || node.right.type !== Type.Boolean) {
-      logError(
+      this.logError(
         node.loc,
         `La operación ${node.left.type} ${node.operator} ${node.right.type} no es posible`
       );
@@ -187,7 +186,7 @@ class ExpressionsVisitor extends Visitor {
     switch (node.operator) {
       case '!':
         if (node.type !== Type.Boolean)
-          logError(
+          this.logError(
             node.loc,
             `La operación ${node.operator} ${node.type} es inválida`
           );
@@ -201,7 +200,7 @@ class ExpressionsVisitor extends Visitor {
         if (tp !== null) {
           node.type = tp;
         } else {
-          logError(
+          this.logError(
             node.loc,
             `La operación ${node.operator} ${node.type} es inválida`
           );
@@ -236,7 +235,7 @@ class ExpressionsVisitor extends Visitor {
         node.expression.type !== null &&
         errorType.includes(node.expression.type)
       ) {
-        logError(
+        this.logError(
           node.loc,
           `La asignación ${variable.type} = ${node.expression.type} no está permitida`
         );
@@ -270,7 +269,7 @@ class ExpressionsVisitor extends Visitor {
         node.init.type !== null &&
         errorType.includes(node.init.type)
       ) {
-        logError(
+        this.logError(
           node.loc,
           `La asignación ${node.type} = ${node.init.type} no está permitida`
         );

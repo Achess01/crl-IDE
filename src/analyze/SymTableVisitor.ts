@@ -15,8 +15,7 @@ import {
 } from 'src/astMembers/Node';
 import Visitor from './Visitor';
 import { CheckUndefinedGlobalVisitor } from './SymTableVisitorGlobal';
-import logError from 'src/errors/LogError';
-import { of } from 'rxjs';
+
 
 class SymTableVisitor extends Visitor {
   visitBlock(node: functionDeclaration | functionMain | whileStmt | forStmt) {
@@ -33,7 +32,7 @@ class SymTableVisitor extends Visitor {
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
-          logError(
+          this.logError(
             variable.id.loc,
             `El identificador '${variable.id.name}' ya está definido`
           );
@@ -78,7 +77,7 @@ class SymTableVisitor extends Visitor {
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
-          logError(
+          this.logError(
             variable.id.loc,
             `El identificador '${variable.id.name}' ya está definido`
           );
@@ -98,7 +97,7 @@ class SymTableVisitor extends Visitor {
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.tableAlternate.addVariable(variable)) {
-          logError(
+          this.logError(
             variable.id.loc,
             `El identificador '${variable.id.name}' ya está definido`
           );

@@ -1,4 +1,5 @@
 import { SymTable } from 'src/astMembers/SymbolTable';
+import logError from 'src/errors/LogError';
 import {
   Node,
   Program,
@@ -29,10 +30,16 @@ import {
 abstract class Visitor {
   global: SymTable;
   ambit?: SymTable;
+  correct: boolean = true;
 
   constructor(ambit?: SymTable){
     this.ambit = ambit;
     this.global = new SymTable('base');
+  }
+
+  logError(loc: any, info:string){
+    this.correct = false;
+    logError(loc, info);
   }
 
   setAmbit(ambit: SymTable){
