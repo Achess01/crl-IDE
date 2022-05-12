@@ -1,10 +1,14 @@
 import {
+  Assignment,
+  BinaryExpression,
   CallFunction,
   forStmt,
   functionDeclaration,
   functionMain,
+  Identifier,
   IfStmt,
   Mostrar,
+  Program,
   Type,
   UnaryExpression,
   VariableDeclarator,
@@ -14,6 +18,17 @@ import Visitor from './Visitor';
 import * as deepAssign from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
+  override visitProgram(node: Program): void {
+    for(const child of node.body){
+      if(child.constructor.name === VariableDeclarator.name){
+        (child as VariableDeclarator).accept(this, node.table);
+      }else if(child.constructor.name === Assignment.name){
+        (child as Assignment).accept(this, node.table);
+      }
+    }
+    node.main?.accept(this, node.table);
+  }
+
   override visitCallFunction(node: CallFunction): void {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
@@ -123,7 +138,52 @@ class ExecuteVisitor extends Visitor {
     console.log(this.ambit);
   }
 
-  override visitfunctionMain(node: functionMain): void {}
+  override visitfunctionMain(node: functionMain): void {
+
+  } 
+  
+  override visitVariableDeclarator(node: VariableDeclarator): void {
+      if(node.init && this.ambit){
+        let variable = this.ambit.getVariable(node.id.name, this.global);
+        if(variable)
+        variable.value = node.init.value;
+      }      
+  }
+
+  override visitAssignment(node: Assignment): void {
+    if(this.ambit){
+      let variable = this.ambit.getVariable(node.id.name, this.global);
+      if(variable)
+      variable.value = node.expression.value;
+    }    
+  }
+
+  override visitUnaryExpression(node: UnaryExpression): void {
+    if(this.ambit && node.argument.constructor.name === Identifier.name){
+      let nodeId = (node.argument as Identifier);
+      let variable = this.ambit.getVariable(nodeId.name, this.global);
+      if(variable)
+      node.value = variable.value;
+    }else if(this.ambit && node.argument.constructor.name === CallFunction.name){
+      let nodeCall = (node.argument as CallFunction);
+      node.value = nodeCall.returnedValue;
+    }
+
+    switch (node.operator) {
+      case '!':
+        node.value = !node.value;
+        break;
+      case '-':
+        node.value = 0 - node.value;
+        break;
+    }
+  }
+
+  override visitBinaryExpression(node: BinaryExpression): void {
+      
+  }
+
+  
 }
 
 export default ExecuteVisitor;

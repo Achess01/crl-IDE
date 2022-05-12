@@ -84,11 +84,9 @@ Int getMax(Int n1, Int n2):
       symT.correct &&
       exprs.correct
     ) {
-      (tree as Program).main?.accept(
-        new ExecuteVisitor().setGlobal(tree.table),
-        null
-      );
+      let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
+      executeVisitor.visit(tree);      
     }
-    console.log(tree);
+    //console.log(tree);
   }
 }
