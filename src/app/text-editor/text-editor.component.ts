@@ -36,7 +36,7 @@ String cadena1, cadena2 = "Hola", cadena3 = "amigos"
 Char a = 'a'
 
 Void Principal():
-    getMax(4, 32^a)
+    Int val = 100 + a
 
 Int getMax(String n1, Int n2):
     Boolean v = 2 == n2 
@@ -87,6 +87,6 @@ Int getMax(Int n1, Int n2):
       let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
       executeVisitor.visit(tree);      
     }
-    //console.log(tree);
+    console.log(tree);
   }
 }

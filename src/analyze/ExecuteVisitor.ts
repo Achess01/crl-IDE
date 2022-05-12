@@ -157,6 +157,8 @@ class ExecuteVisitor extends Visitor {
     ) {
       let nodeCall = node.argument as CallFunction;
       node.value = nodeCall.returnedValue;
+    }else{
+      node.value = node.argument;
     }
 
     switch (node.operator) {
@@ -294,7 +296,8 @@ class ExecuteVisitor extends Visitor {
         switch (interact.type) {
           case Type.Int:
           case Type.Double:
-            return (exp.value as string).charCodeAt(0);
+            return (exp.value as string).charCodeAt(0);            
+            break;
         }
         break;
     }
