@@ -1,3 +1,4 @@
+import { SymTable } from 'src/astMembers/SymbolTable';
 import {
   BinaryExpression,
   Type,
@@ -8,6 +9,10 @@ import {
   VariableDeclarator,
   Assignment,
   returnStmt,
+  forStmt,
+  whileStmt,
+  breakStmt,
+  continueStmt,
 } from '../astMembers/Node';
 import Visitor from './Visitor';
 
@@ -175,8 +180,48 @@ class ExpressionsVisitor extends Visitor {
   }
 
   override visitreturnStmt(node: returnStmt): void {
-    
-    console.log(node);
+    if (this.ambit.returnedType !== Type.Void) {
+      if(!node.argument){
+        this.logError(node.loc, `Debe retornar un valor`);
+      }
+      else if(this.ambit.returnedType !== node.argument.type) {
+        this.logError(
+          node.loc,
+          `Tipo de retorno incorrecto. Se esperaba ${this.ambit.returnedType}. Se obtuvo ${node.argument.type}`
+        );
+      } 
+    } 
+  }
+
+  override visitbreakStmt(node: breakStmt): void {
+      let inCicle = false;
+      let upper: SymTable | null = this.ambit;
+      while(upper !== null){
+        if(upper.name === 'Mientras' || upper.name === 'Para'){
+          inCicle = true;
+          break;
+        }
+        upper = upper.upperAmbit;        
+      }
+      if(!inCicle){
+        this.logError(node.loc, `La instrucción 'Detener' debe de ir dentro de un ciclo`);
+      }
+      console.log(this.ambit);
+  }
+
+  override visitcontinueStmt(node: continueStmt): void {
+    let inCicle = false;
+    let upper: SymTable | null = this.ambit;
+    while(upper !== null){
+      if(upper.name === 'Mientras' || upper.name === 'Para'){
+        inCicle = true;
+        break;
+      }
+      upper = upper.upperAmbit;        
+    }
+    if(!inCicle){
+      this.logError(node.loc, `La instrucción 'Continuar' debe de ir dentro de un ciclo`);
+    }
     console.log(this.ambit);
   }
 
