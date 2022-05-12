@@ -307,7 +307,8 @@ export class functionDeclaration extends Node {
     this.type = type;
     this.body = body;
     this.nameForTable = this.getNameForTable();
-    this.table = new SymTable(`función ${id}`);
+    this.table = new SymTable(`funcion ${id}`);
+    this.table.returnedType = this.type;
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {

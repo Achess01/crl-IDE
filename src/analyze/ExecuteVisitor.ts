@@ -18,7 +18,6 @@ import {
 } from 'src/astMembers/Node';
 import Visitor from './Visitor';
 
-
 class ExecuteVisitor extends Visitor {
   override visitProgram(node: Program): void {
     for (const child of node.body) {
@@ -128,8 +127,11 @@ class ExecuteVisitor extends Visitor {
   override visitMostrar(node: Mostrar): void {
     let expresisons = node.expressions;
     let formatInfo = node.strFormat;
-    for(const index in expresisons){
-      formatInfo = formatInfo.replace(`{${index}}`, expresisons[parseInt(index)].value);
+    for (const index in expresisons) {
+      formatInfo = formatInfo.replace(
+        `{${index}}`,
+        expresisons[parseInt(index)].value
+      );
     }
     console.info(formatInfo);
   }
@@ -139,7 +141,8 @@ class ExecuteVisitor extends Visitor {
   override visitVariableDeclarator(node: VariableDeclarator): void {
     if (node.init && this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);
-      if (variable) variable.value = this.assignmentChangeValue(variable.type, node.init);
+      if (variable)
+        variable.value = this.assignmentChangeValue(variable.type, node.init);
     }
   }
 
@@ -201,7 +204,11 @@ class ExecuteVisitor extends Visitor {
   override visitAssignment(node: Assignment): void {
     if (this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);
-      if (variable) variable.value = this.assignmentChangeValue(variable.type, node.expression);
+      if (variable)
+        variable.value = this.assignmentChangeValue(
+          variable.type,
+          node.expression
+        );
     }
   }
 
@@ -284,9 +291,9 @@ class ExecuteVisitor extends Visitor {
           node.value = lv === rv;
         } else if (
           node.left.type === Type.Int ||
-          node.left.type === Type.Double          
+          node.left.type === Type.Double
         ) {
-          let incertVal = Math.abs(lval - rval);          
+          let incertVal = Math.abs(lval - rval);
           node.value = incertVal <= this.ambit.incert ? true : false;
         } else {
           node.value = lval === rval;

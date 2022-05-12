@@ -16,7 +16,6 @@ import {
 import Visitor from './Visitor';
 import { CheckUndefinedGlobalVisitor } from './SymTableVisitorGlobal';
 
-
 class SymTableVisitor extends Visitor {
   visitBlock(node: functionDeclaration | functionMain | whileStmt | forStmt) {
     let checkUndefined = new CheckUndefinedGlobalVisitor(node.table).setGlobal(
@@ -118,18 +117,23 @@ class SymTableVisitor extends Visitor {
       case IfStmt.name:
         (child as IfStmt).table.addUpperAmbit(father.table);
         (child as IfStmt).table.incert = father.table.incert;
+        (child as IfStmt).table.returnedType = father.table.returnedType;
         (child as IfStmt).tableAlternate.addUpperAmbit(father.table);
         (child as IfStmt).tableAlternate.incert = father.table.incert;
+        (child as IfStmt).tableAlternate.returnedType =
+          father.table.returnedType;
         (child as IfStmt).accept(this, null);
         break;
       case forStmt.name:
         (child as forStmt).table.addUpperAmbit(father.table);
         (child as forStmt).table.incert = father.table.incert;
+        (child as forStmt).table.returnedType = father.table.returnedType;
         (child as forStmt).accept(this, null);
         break;
       case whileStmt.name:
         (child as whileStmt).table.addUpperAmbit(father.table);
         (child as whileStmt).table.incert = father.table.incert;
+        (child as whileStmt).table.returnedType = father.table.returnedType;
         (child as whileStmt).accept(this, null);
         break;
     }
@@ -162,7 +166,7 @@ class SymTableVisitor extends Visitor {
         break;
       case DibujarAST.name:
         checkUndefined.visit(child as DibujarAST);
-        break;      
+        break;
       case CallFunction.name:
         (child as CallFunction).accept(checkUndefined, null);
     }

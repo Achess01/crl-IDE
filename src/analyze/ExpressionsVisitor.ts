@@ -7,6 +7,7 @@ import {
   CallFunction,
   VariableDeclarator,
   Assignment,
+  returnStmt,
 } from '../astMembers/Node';
 import Visitor from './Visitor';
 
@@ -171,6 +172,12 @@ class ExpressionsVisitor extends Visitor {
         `La operación ${node.left.type} ${node.operator} ${node.right.type} no es posible`
       );
     }
+  }
+
+  override visitreturnStmt(node: returnStmt): void {
+    
+    console.log(node);
+    console.log(this.ambit);
   }
 
   override visitUnaryExpression(node: UnaryExpression): void {

@@ -1,7 +1,8 @@
-import { functionDeclaration, VariableDeclarator } from './Node';
+import { functionDeclaration, VariableDeclarator, Type } from './Node';
 
-export class SymTable {
+export class SymTable {  
   name: string;
+  returnedType: Type = Type.Void;
   symbolVars: { [id: string]: VariableDeclarator } = {};
   symbolFuncs: { [id: string]: {[id:string]:functionDeclaration} } = {};
   upperAmbit: SymTable | null;
