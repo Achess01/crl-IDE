@@ -2,13 +2,13 @@ import { functionDeclaration, VariableDeclarator } from './Node';
 
 export class SymTable {
   name: string;
-  private symbolVars: { [id: string]: VariableDeclarator } = {};
-  private symbolFuncs: { [id: string]: {[id:string]:functionDeclaration} } = {};
+  symbolVars: { [id: string]: VariableDeclarator } = {};
+  symbolFuncs: { [id: string]: {[id:string]:functionDeclaration} } = {};
   upperAmbit: SymTable | null;
   constructor(name: string) {
     this.name = name;
     this.upperAmbit = null;
-  }
+  } 
 
   getSymbolVars(){
     return this.symbolVars;

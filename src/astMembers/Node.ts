@@ -174,7 +174,7 @@ export class UnaryExpression extends Expr {
   constructor(
     loc: any,
     type: Type | null,
-    operator: string,
+    operator: string | null,
     argument: string | number | Identifier | boolean | CallFunction
   ) {
     super(loc, type);
