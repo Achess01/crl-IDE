@@ -126,8 +126,12 @@ class ExecuteVisitor extends Visitor {
   }
 
   override visitMostrar(node: Mostrar): void {
-    console.log('Mostrar ambit');
-    console.log(this.ambit);
+    let expresisons = node.expressions;
+    let formatInfo = node.strFormat;
+    for(const index in expresisons){
+      formatInfo = formatInfo.replace(`{${index}}`, expresisons[parseInt(index)].value);
+    }
+    console.info(formatInfo);
   }
 
   override visitfunctionMain(node: functionMain): void {}

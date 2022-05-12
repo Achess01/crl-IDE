@@ -35,6 +35,7 @@ Incerteza 0.34
 String cadena1, cadena2 = "Hola", cadena3 = "amigos"
 Char a = 'a'
 
+
 Void Principal():
     Int val = 100 + a
 
