@@ -29,11 +29,12 @@ import {
 
 abstract class Visitor {
   global: SymTable;
-  ambit?: SymTable;
+  ambit: SymTable;
   correct: boolean = true;
 
   constructor(ambit?: SymTable){
-    this.ambit = ambit;
+    if(ambit) this.ambit = ambit;
+    else this.ambit = new SymTable('base');
     this.global = new SymTable('base');
   }
 

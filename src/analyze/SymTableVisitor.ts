@@ -117,15 +117,19 @@ class SymTableVisitor extends Visitor {
     switch (child.constructor.name) {
       case IfStmt.name:
         (child as IfStmt).table.addUpperAmbit(father.table);
+        (child as IfStmt).table.incert = father.table.incert;
         (child as IfStmt).tableAlternate.addUpperAmbit(father.table);
+        (child as IfStmt).tableAlternate.incert = father.table.incert;
         (child as IfStmt).accept(this, null);
         break;
       case forStmt.name:
         (child as forStmt).table.addUpperAmbit(father.table);
+        (child as forStmt).table.incert = father.table.incert;
         (child as forStmt).accept(this, null);
         break;
       case whileStmt.name:
         (child as whileStmt).table.addUpperAmbit(father.table);
+        (child as whileStmt).table.incert = father.table.incert;
         (child as whileStmt).accept(this, null);
         break;
     }

@@ -55,14 +55,14 @@ class SymTableGlobalVisitor extends Visitor {
         node.table.incert = value;
       }
 
-      /* switch (child.constructor.name) {
+      switch (child.constructor.name) {
         case functionDeclaration.name:
-          (child as functionDeclaration).table.addUpperAmbit(node.table);
+          (child as functionDeclaration).table.incert = node.table.incert;
           break;
         case functionMain.name:
-          (child as functionMain).table.addUpperAmbit(node.table);
-          break;        
-      } */
+          (child as functionMain).table.incert = node.table.incert;
+          break;
+      }
     }
     /* Then adding variables and comprobing the use of undefined variables */
     for (let child of node.body) {
@@ -79,48 +79,50 @@ class SymTableGlobalVisitor extends Visitor {
         }
       } else if (child.constructor.name === Assignment.name) {
         checkUndefined.visit(child as Assignment);
-        //(child as Assignment).accept(checkUndefined, null);        
+        //(child as Assignment).accept(checkUndefined, null);
       }
     }
   }
 }
 
 export class CheckUndefinedGlobalVisitor extends Visitor {
-      
   override visitIdentifier(node: Identifier): void {
-    let variable = this.ambit?.getVariable(node.name, this.global);     
+    let variable = this.ambit?.getVariable(node.name, this.global);
     if (variable === undefined) {
       this.logError(node.loc, `La variable '${node.name}' no existe`);
     } else if (variable.init === null && !variable.isParam) {
-      this.logError(node.loc, `La variable '${node.name}' no está inicializada`);
-    }    
+      this.logError(
+        node.loc,
+        `La variable '${node.name}' no está inicializada`
+      );
+    }
   }
 
   override visitAssignment(node: Assignment): void {
     let variable = this.ambit?.getVariable(node.id.name, this.global);
     if (variable === undefined) {
       this.logError(node.loc, `La variable '${node.id.name}' no existe`);
-    }else{
-      if(variable.init === null) variable.init = node.expression;
+    } else {
+      if (variable.init === null) variable.init = node.expression;
     }
     node.expression.accept(this, null);
   }
 
   override visitDibujarAST(node: DibujarAST): void {
-      let name = node.id.name;
-      if(!this.ambit?.itExistsThisFunctionId(name)){
-        this.logError(node.loc, `No existe ninguna función '${name}'`);
-      }
+    let name = node.id.name;
+    if (!this.ambit?.itExistsThisFunctionId(name)) {
+      this.logError(node.loc, `No existe ninguna función '${name}'`);
+    }
   }
 
   override visitUnaryExpression(node: UnaryExpression): void {
-      if(node.argument.constructor.name === Identifier.name){
-        let name = (node.argument as Identifier).name;
-        let variable = this.ambit?.getVariable(name, this.global);
-        if(variable !== undefined){
-          node.type = variable.type;
-        }        
+    if (node.argument.constructor.name === Identifier.name) {
+      let name = (node.argument as Identifier).name;
+      let variable = this.ambit?.getVariable(name, this.global);
+      if (variable !== undefined) {
+        node.type = variable.type;
       }
+    }
   }
 }
 

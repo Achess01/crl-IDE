@@ -284,11 +284,10 @@ class ExecuteVisitor extends Visitor {
           node.value = lv === rv;
         } else if (
           node.left.type === Type.Int ||
-          node.left.type === Type.Double
+          node.left.type === Type.Double          
         ) {
-          let incertVal = Math.abs(lval - rval);
-          console.log(incertVal);
-          node.value = incertVal <= this.global.incert ? true : false;
+          let incertVal = Math.abs(lval - rval);          
+          node.value = incertVal <= this.ambit.incert ? true : false;
         } else {
           node.value = lval === rval;
         }
