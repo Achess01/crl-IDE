@@ -17,7 +17,7 @@ import {
   whileStmt,
 } from 'src/astMembers/Node';
 import Visitor from './Visitor';
-import * as deepAssign from 'object-assign-deep';
+
 
 class ExecuteVisitor extends Visitor {
   override visitProgram(node: Program): void {
@@ -135,14 +135,69 @@ class ExecuteVisitor extends Visitor {
   override visitVariableDeclarator(node: VariableDeclarator): void {
     if (node.init && this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);
-      if (variable) variable.value = node.init.value;
+      if (variable) variable.value = this.assignmentChangeValue(variable.type, node.init);
     }
+  }
+
+  assignmentChangeValue(typeVar: Type | null, expr: Expr) {
+    switch (typeVar) {
+      case Type.String:
+        return this.assignmentChangeString(expr);
+      case Type.Double:
+        return this.assignmentChangeDouble(expr);
+      case Type.Boolean:
+        return this.assignmentChangeBoolean(expr);
+      case Type.Char:
+        return this.assignmentChangeChar(expr);
+      case Type.Int:
+        return this.assignmentChangeInt(expr);
+    }
+    return expr.value;
+  }
+
+  assignmentChangeString(expr: Expr) {
+    return String(expr.value);
+  }
+
+  assignmentChangeDouble(expr: Expr) {
+    switch (expr.type) {
+      case Type.Boolean:
+        if (expr.value) return 1;
+        return 0;
+      case Type.Char:
+        return (expr.value as string).charCodeAt(0);
+    }
+    return expr.value;
+  }
+
+  assignmentChangeBoolean(expr: Expr) {
+    return expr.value;
+  }
+  assignmentChangeChar(expr: Expr) {
+    switch (expr.type) {
+      case Type.Int:
+        return String.fromCharCode(expr.value);
+    }
+    return expr.value;
+  }
+  assignmentChangeInt(expr: Expr) {
+    switch (expr.type) {
+      case Type.Double:
+        return parseInt(expr.value);
+      case Type.Boolean:
+        if (expr.value) return 1;
+        return 0;
+      case Type.Char:
+        return (expr.value as string).charCodeAt(0);
+    }
+
+    return expr.value;
   }
 
   override visitAssignment(node: Assignment): void {
     if (this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);
-      if (variable) variable.value = node.expression.value;
+      if (variable) variable.value = this.assignmentChangeValue(variable.type, node.expression);
     }
   }
 
@@ -157,7 +212,7 @@ class ExecuteVisitor extends Visitor {
     ) {
       let nodeCall = node.argument as CallFunction;
       node.value = nodeCall.returnedValue;
-    }else{
+    } else {
       node.value = node.argument;
     }
 
@@ -228,6 +283,7 @@ class ExecuteVisitor extends Visitor {
           node.left.type === Type.Double
         ) {
           let incertVal = Math.abs(lval - rval);
+          console.log(incertVal);
           node.value = incertVal <= this.global.incert ? true : false;
         } else {
           node.value = lval === rval;
@@ -272,8 +328,8 @@ class ExecuteVisitor extends Visitor {
         let val =
           this.getValue(node.left, node.right) ^
           this.getValue(node.right, node.left);
-          if(val === 1) node.value = true;
-          node.value = false;
+        if (val === 1) node.value = true;
+        node.value = false;
         break;
     }
   }
@@ -296,7 +352,7 @@ class ExecuteVisitor extends Visitor {
         switch (interact.type) {
           case Type.Int:
           case Type.Double:
-            return (exp.value as string).charCodeAt(0);            
+            return (exp.value as string).charCodeAt(0);
             break;
         }
         break;
