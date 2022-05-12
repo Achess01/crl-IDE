@@ -5,6 +5,7 @@ export class SymTable {
   symbolVars: { [id: string]: VariableDeclarator } = {};
   symbolFuncs: { [id: string]: {[id:string]:functionDeclaration} } = {};
   upperAmbit: SymTable | null;
+  incert: number = 0.5;
   constructor(name: string) {
     this.name = name;
     this.upperAmbit = null;

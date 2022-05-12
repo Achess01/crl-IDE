@@ -52,6 +52,7 @@ class SymTableGlobalVisitor extends Visitor {
       } else if (child.constructor.name === Incerteza.name) {
         let value = (child as Incerteza).value;
         node.incerteza = value;
+        node.table.incert = value;
       }
 
       /* switch (child.constructor.name) {

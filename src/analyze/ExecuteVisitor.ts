@@ -2,11 +2,13 @@ import {
   Assignment,
   BinaryExpression,
   CallFunction,
+  Expr,
   forStmt,
   functionDeclaration,
   functionMain,
   Identifier,
   IfStmt,
+  LogicalExpression,
   Mostrar,
   Program,
   Type,
@@ -19,10 +21,10 @@ import * as deepAssign from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
   override visitProgram(node: Program): void {
-    for(const child of node.body){
-      if(child.constructor.name === VariableDeclarator.name){
+    for (const child of node.body) {
+      if (child.constructor.name === VariableDeclarator.name) {
         (child as VariableDeclarator).accept(this, node.table);
-      }else if(child.constructor.name === Assignment.name){
+      } else if (child.constructor.name === Assignment.name) {
         (child as Assignment).accept(this, node.table);
       }
     }
@@ -33,7 +35,7 @@ class ExecuteVisitor extends Visitor {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = this.cloneFunction(func);                
+        let nf = this.cloneFunction(func);
       }
     }
   }
@@ -47,29 +49,23 @@ class ExecuteVisitor extends Visitor {
     return nf;
   }
 
-  cloneFor(old: forStmt){
+  cloneFor(old: forStmt) {
     let nf = Object.assign(
-      new forStmt({},[],old.init,old.test,old.update),
+      new forStmt({}, [], old.init, old.test, old.update),
       old
     );
     this.cloneTable(old, nf);
     return nf;
   }
 
-  cloneWhile(old: whileStmt){
-    let nf = Object.assign(
-      new whileStmt({},[],old.test),
-      old
-    );
+  cloneWhile(old: whileStmt) {
+    let nf = Object.assign(new whileStmt({}, [], old.test), old);
     this.cloneTable(old, nf);
     return nf;
   }
 
-  cloneIf(old: IfStmt){
-    let nf = Object.assign(
-      new IfStmt({},old.test,[],[]),
-      old
-    );
+  cloneIf(old: IfStmt) {
+    let nf = Object.assign(new IfStmt({}, old.test, [], []), old);
     this.cloneTableIf(old, nf);
     return nf;
   }
@@ -93,11 +89,8 @@ class ExecuteVisitor extends Visitor {
     newB.table.symbolVars = newVars;
   }
 
-  cloneTableIf(
-    oldB: IfStmt,
-    newB: IfStmt
-  ) {
-    /* Consequent table */    
+  cloneTableIf(oldB: IfStmt, newB: IfStmt) {
+    /* Consequent table */
     newB.table = Object.assign({}, oldB.table);
     let vars = newB.table.symbolVars;
     let newVars: { [id: string]: VariableDeclarator } = {};
@@ -128,7 +121,6 @@ class ExecuteVisitor extends Visitor {
     newB.tableAlternate.symbolVars = newVars;
   }
 
-
   override visitIfStmt(node: IfStmt): void {
     console.log(this.ambit);
   }
@@ -138,34 +130,32 @@ class ExecuteVisitor extends Visitor {
     console.log(this.ambit);
   }
 
-  override visitfunctionMain(node: functionMain): void {
+  override visitfunctionMain(node: functionMain): void {}
 
-  } 
-  
   override visitVariableDeclarator(node: VariableDeclarator): void {
-      if(node.init && this.ambit){
-        let variable = this.ambit.getVariable(node.id.name, this.global);
-        if(variable)
-        variable.value = node.init.value;
-      }      
+    if (node.init && this.ambit) {
+      let variable = this.ambit.getVariable(node.id.name, this.global);
+      if (variable) variable.value = node.init.value;
+    }
   }
 
   override visitAssignment(node: Assignment): void {
-    if(this.ambit){
+    if (this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);
-      if(variable)
-      variable.value = node.expression.value;
-    }    
+      if (variable) variable.value = node.expression.value;
+    }
   }
 
   override visitUnaryExpression(node: UnaryExpression): void {
-    if(this.ambit && node.argument.constructor.name === Identifier.name){
-      let nodeId = (node.argument as Identifier);
+    if (this.ambit && node.argument.constructor.name === Identifier.name) {
+      let nodeId = node.argument as Identifier;
       let variable = this.ambit.getVariable(nodeId.name, this.global);
-      if(variable)
-      node.value = variable.value;
-    }else if(this.ambit && node.argument.constructor.name === CallFunction.name){
-      let nodeCall = (node.argument as CallFunction);
+      if (variable) node.value = variable.value;
+    } else if (
+      this.ambit &&
+      node.argument.constructor.name === CallFunction.name
+    ) {
+      let nodeCall = node.argument as CallFunction;
       node.value = nodeCall.returnedValue;
     }
 
@@ -180,10 +170,137 @@ class ExecuteVisitor extends Visitor {
   }
 
   override visitBinaryExpression(node: BinaryExpression): void {
-      
+    switch (node.operator) {
+      case '+':
+        node.value =
+          this.getValue(node.left, node.right) +
+          this.getValue(node.right, node.left);
+        break;
+      case '-':
+        node.value =
+          this.getValue(node.left, node.right) -
+          this.getValue(node.right, node.left);
+        break;
+      case '*':
+        node.value =
+          this.getValue(node.left, node.right) *
+          this.getValue(node.right, node.left);
+        break;
+      case '/':
+        node.value =
+          this.getValue(node.left, node.right) /
+          this.getValue(node.right, node.left);
+        break;
+      case '%':
+        node.value =
+          this.getValue(node.left, node.right) %
+          this.getValue(node.right, node.left);
+        break;
+      case '^':
+        node.value = Math.pow(
+          this.getValue(node.left, node.right),
+          this.getValue(node.right, node.left)
+        );
+        break;
+      case '==':
+        node.value =
+          this.getValue(node.left, node.right) ===
+          this.getValue(node.right, node.left);
+        break;
+      case '!=':
+        node.value =
+          this.getValue(node.left, node.right) !==
+          this.getValue(node.right, node.left);
+        break;
+      case '~':
+        let lval = this.getValue(node.left, node.right);
+        let rval = this.getValue(node.right, node.left);
+        if (node.left.type === Type.String) {
+          let lv = lval as string;
+          let rv = rval as string;
+          lv = lv.trim().toLowerCase();
+          rv = rv.trim().toLowerCase();
+          node.value = lv === rv;
+        } else if (
+          node.left.type === Type.Int ||
+          node.left.type === Type.Double
+        ) {
+          let incertVal = Math.abs(lval - rval);
+          node.value = incertVal <= this.global.incert ? true : false;
+        } else {
+          node.value = lval === rval;
+        }
+        break;
+      case '>':
+        node.value =
+          this.getValue(node.left, node.right) >
+          this.getValue(node.right, node.left);
+        break;
+      case '>=':
+        node.value =
+          this.getValue(node.left, node.right) >=
+          this.getValue(node.right, node.left);
+        break;
+      case '<':
+        node.value =
+          this.getValue(node.left, node.right) <
+          this.getValue(node.right, node.left);
+        break;
+      case '<=':
+        node.value =
+          this.getValue(node.left, node.right) <=
+          this.getValue(node.right, node.left);
+        break;
+    }
   }
 
-  
+  override visitLogicalExpression(node: LogicalExpression): void {
+    switch (node.operator) {
+      case '||':
+        node.value =
+          this.getValue(node.left, node.right) ||
+          this.getValue(node.right, node.left);
+        break;
+      case '&&':
+        node.value =
+          this.getValue(node.left, node.right) &&
+          this.getValue(node.right, node.left);
+        break;
+      case '!&':
+        let val =
+          this.getValue(node.left, node.right) ^
+          this.getValue(node.right, node.left);
+          if(val === 1) node.value = true;
+          node.value = false;
+        break;
+    }
+  }
+
+  getValue(exp: Expr, interact: Expr): any {
+    switch (exp.type) {
+      case Type.Int:
+      case Type.Double:
+      case Type.String:
+        return exp.value;
+      case Type.Boolean:
+        switch (interact.type) {
+          case Type.Int:
+          case Type.Double:
+          case Type.String:
+            return Number(exp.value);
+        }
+        break;
+      case Type.Char:
+        switch (interact.type) {
+          case Type.Int:
+          case Type.Double:
+            return (exp.value as string).charCodeAt(0);
+        }
+        break;
+    }
+
+    return exp.value;
+  }
 }
 
 export default ExecuteVisitor;
