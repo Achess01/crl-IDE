@@ -34,44 +34,53 @@ class ExecuteVisitor extends Visitor {
       } else if (child.constructor.name === Assignment.name) {
         (child as Assignment).accept(this, node.table);
       }
-    }    
-    if(node.main){
+    }
+    if (node.main) {
       runBlock(node.main.table, node.main.body, this.global);
     }
-    
   }
 
   override visitCallFunction(node: CallFunction): void {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = cloneFunction(func);    
+        let nf = cloneFunction(func);
         let tb = nf.table;
         let params = nf.params;
-        for(const index in node.args){
+        for (const index in node.args) {
           let name = params[index].id.name;
           let variable = tb.getVariable(name);
-          if(variable) variable.value = node.args[index].value;
+          if (variable) variable.value = node.args[index].value;
+          
         }
+                   
         //let val = runFunc(nf, this.global);
         let val = runBlock(nf.table, nf.body, this.global);
-        console.log(nf.table);
-        if(val.value === null){
-          switch(nf.type){
-            case Type.Boolean: node.returnedValue = false; break;            
-            case Type.Char: node.returnedValue = '1'; break;
-            case Type.Double: node.returnedValue = 1; break;
-            case Type.Int: node.returnedValue = 1; break;
-            case Type.String: node.returnedValue = ''; break;
+
+        if (val.value === null) {
+          switch (nf.type) {
+            case Type.Boolean:
+              node.returnedValue = false;
+              break;
+            case Type.Char:
+              node.returnedValue = '1';
+              break;
+            case Type.Double:
+              node.returnedValue = 1;
+              break;
+            case Type.Int:
+              node.returnedValue = 1;
+              break;
+            case Type.String:
+              node.returnedValue = '';
+              break;
           }
-        }else{
+        } else {
           node.returnedValue = val.value;
         }
       }
     }
   }
-
-
 
   override visitMostrar(node: Mostrar): void {
     let expresisons = node.expressions;
@@ -156,6 +165,7 @@ class ExecuteVisitor extends Visitor {
           variable.type,
           node.expression
         );
+        console.log(this.ambit);
     }
   }
 
@@ -184,7 +194,7 @@ class ExecuteVisitor extends Visitor {
     }
   }
 
-  override visitBinaryExpression(node: BinaryExpression): void {
+  override visitBinaryExpression(node: BinaryExpression): void {    
     switch (node.operator) {
       case '+':
         node.value =
@@ -199,7 +209,7 @@ class ExecuteVisitor extends Visitor {
       case '*':
         node.value =
           this.getValue(node.left, node.right) *
-          this.getValue(node.right, node.left);
+          this.getValue(node.right, node.left);          
         break;
       case '/':
         node.value =

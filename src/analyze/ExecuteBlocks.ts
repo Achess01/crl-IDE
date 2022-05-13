@@ -152,7 +152,7 @@ export function runBlock(
         let if_stmt = cloneIf(child as IfStmt);
         if_stmt.table.addUpperAmbit(table);
         if_stmt.tableAlternate.addUpperAmbit(table);
-        let returnedIf = runIf(if_stmt, global);
+        let returnedIf = runIf(if_stmt, global);        
         if (returnedIf.isReturned) return returnedIf;
         break;
       case forStmt.name:
@@ -169,6 +169,7 @@ export function runBlock(
         break;
       default:
         child.accept(visitor, null);
+        break;
     }
   }
   return new returnTypes(false);
@@ -208,7 +209,7 @@ function cloneTable(
   newB: functionDeclaration | whileStmt | forStmt
 ) {
   newB.table = Object.assign(new SymTable('base'), oldB.table);
-  let vars = newB.table.symbolVars;
+  let vars = oldB.table.symbolVars;
   let newVars: { [id: string]: VariableDeclarator } = {};
   for (const key in vars) {
     const old_var = vars[key];
@@ -225,7 +226,7 @@ function cloneTable(
 function cloneTableIf(oldB: IfStmt, newB: IfStmt) {
   /* Consequent table */
   newB.table = Object.assign(new SymTable('base'), oldB.table);
-  let vars = newB.table.symbolVars;
+  let vars = oldB.table.symbolVars;
   let newVars: { [id: string]: VariableDeclarator } = {};
   for (const key in vars) {
     const old_var = vars[key];
@@ -243,7 +244,7 @@ function cloneTableIf(oldB: IfStmt, newB: IfStmt) {
     new SymTable('base'),
     oldB.tableAlternate
   );
-  let varsAlt = newB.tableAlternate.symbolVars;
+  let varsAlt = oldB.tableAlternate.symbolVars;
   let newVarsAlt: { [id: string]: VariableDeclarator } = {};
   for (const key in varsAlt) {
     const old_var = varsAlt[key];

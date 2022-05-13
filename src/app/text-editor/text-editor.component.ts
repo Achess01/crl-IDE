@@ -37,13 +37,9 @@ Char a = 'a'
 
 
 Void Principal():
-  Int val = 100 + a
-  Mostrar("{0}", factorial(5))
-  Si(true):
-    Mostrar("val = {0}", val - 100)
-    Para(Int x = val - a; x < 102; ++):        
-      Si(x % 2 == 0):
-        Mostrar("Hola amigos {0}", x) 
+  
+  Mostrar("Factorial {0}", factorial2(5))
+  
 
 Int factorial(Int n):
     Int num = 1
@@ -51,6 +47,11 @@ Int factorial(Int n):
       num = num * n
       n = n -1
     Retorno num
+
+Int factorial2(Int numero):
+    Si(numero > 1):
+      numero = numero * factorial2(numero - 1)
+    Retorno numero
 
 Int getMax(String n1, Int n2):
     Boolean v = 2 == n2 

@@ -103,7 +103,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
     if (variable === undefined) {
       this.logError(node.loc, `La variable '${node.id.name}' no existe`);
     } else {
-      if (variable.init === null) variable.init = node.expression;
+      if (variable.init === null && !variable.isParam) variable.init = node.expression;
     }
     node.expression.accept(this, null);
   }
