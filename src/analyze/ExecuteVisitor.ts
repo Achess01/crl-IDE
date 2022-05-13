@@ -16,7 +16,14 @@ import {
   VariableDeclarator,
   whileStmt,
 } from 'src/astMembers/Node';
-import { cloneFor, cloneFunction, cloneIf, cloneWhile, runFunc } from './ExecuteBlocks';
+import {
+  cloneFor,
+  cloneFunction,
+  cloneIf,
+  cloneWhile,
+  runBlock,
+  runFunc,
+} from './ExecuteBlocks';
 import Visitor from './Visitor';
 
 class ExecuteVisitor extends Visitor {
@@ -27,21 +34,25 @@ class ExecuteVisitor extends Visitor {
       } else if (child.constructor.name === Assignment.name) {
         (child as Assignment).accept(this, node.table);
       }
+    }    
+    if(node.main){
+      runBlock(node.main.table, node.main.body, this.global);
     }
-    node.main?.accept(this, node.table);
+    
   }
 
   override visitCallFunction(node: CallFunction): void {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = cloneFunction(func);
-        nf.table.addUpperAmbit(this.ambit);        
-        let val = runFunc(nf, this);
+        let nf = cloneFunction(func);        
+        let val = runFunc(nf, this.global);
+        node.returnedValue = val;
       }
     }
   }
-  
+
+
 
   override visitMostrar(node: Mostrar): void {
     let expresisons = node.expressions;
@@ -54,7 +65,7 @@ class ExecuteVisitor extends Visitor {
     }
     console.info(formatInfo);
   }
-  
+
   override visitVariableDeclarator(node: VariableDeclarator): void {
     if (node.init && this.ambit) {
       let variable = this.ambit.getVariable(node.id.name, this.global);

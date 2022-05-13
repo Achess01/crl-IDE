@@ -37,7 +37,13 @@ Char a = 'a'
 
 
 Void Principal():
-    Int val = 100 + a
+  Int val = 100 + a
+  Mostrar("{0}", val)
+  Si(true):
+    Mostrar("val = {0}", val - 100)
+    Para(Int x = val - a; x < 102; ++):        
+      Si(x % 2 == 0):
+        Mostrar("Hola amigos {0}", x) 
 
 Int getMax(String n1, Int n2):
     Boolean v = 2 == n2 
