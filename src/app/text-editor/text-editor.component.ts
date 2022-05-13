@@ -47,6 +47,12 @@ Int factorial(Int n):
       num = num * n
       n = n -1
     Retorno num
+  
+Int fibonacci(Int num):
+    Si(num == 0 || num == 1):
+      Retorno num
+    Sino:
+      Retorno fibonacci(num -1) + fibonacci(num -2)
 
 Int factorial2(Int numero):
     Si(numero > 1):

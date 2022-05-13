@@ -138,7 +138,7 @@ export function runBlock(
       case returnStmt.name:
         let rt = new returnTypes(true);
         (child as returnStmt).argument?.accept(visitor, null);
-        rt.value = (child as returnStmt).argument?.value;
+        rt.value = (child as returnStmt).argument?.value;        
         return rt;
       case breakStmt.name:
         let rt_break = new returnTypes(true);
@@ -152,7 +152,7 @@ export function runBlock(
         let if_stmt = cloneIf(child as IfStmt);
         if_stmt.table.addUpperAmbit(table);
         if_stmt.tableAlternate.addUpperAmbit(table);
-        let returnedIf = runIf(if_stmt, global);        
+        let returnedIf = runIf(if_stmt, global);
         if (returnedIf.isReturned) return returnedIf;
         break;
       case forStmt.name:

@@ -57,7 +57,7 @@ class ExecuteVisitor extends Visitor {
         //let val = runFunc(nf, this.global);
         let val = runBlock(nf.table, nf.body, this.global);
 
-        if (val.value === null) {
+        if (val.value === null) {          
           switch (nf.type) {
             case Type.Boolean:
               node.returnedValue = false;
@@ -164,8 +164,7 @@ class ExecuteVisitor extends Visitor {
         variable.value = this.assignmentChangeValue(
           variable.type,
           node.expression
-        );
-        console.log(this.ambit);
+        );        
     }
   }
 
@@ -195,6 +194,7 @@ class ExecuteVisitor extends Visitor {
   }
 
   override visitBinaryExpression(node: BinaryExpression): void {    
+    console.log(node);
     switch (node.operator) {
       case '+':
         node.value =
