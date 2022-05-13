@@ -24,9 +24,12 @@ import {
     DibujarEXP,
     DibujarTS
 } from '../astMembers/Node';
+
+import logError from 'src/errors/LogError';
+
 declare var parser:any;
 
-const ast = (code:string)=>{
+const ast = (code:string)=>{    
     return parser.parse(code + "\n");
 }
 
@@ -55,6 +58,18 @@ yy.whileStmt = whileStmt;
 yy.Mostrar = Mostrar;
 yy.DibujarAST = DibujarAST;
 yy.DibujarEXP = DibujarEXP;
-yy.DibujarTS = DibujarTS;    
+yy.DibujarTS = DibujarTS;
+yy.correct = true;
+
+yy.parseError = function(msg:any, hash:any){  
+  yy.correct = false;
+  yy.logError(msg, hash);
+}
+
+yy.logError = function(msg:any, hash:any){  
+  logError(hash.loc, msg);
+}
+
+
     
 export default ast;

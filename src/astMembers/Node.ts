@@ -29,6 +29,7 @@ export class Program extends Node {
   incerteza: number = 0.5;
   table: SymTable;
   main: functionMain | null;
+  correct:boolean = true;
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;

@@ -19,14 +19,13 @@ export class TextEditorComponent implements OnInit {
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
-    lineWrapping: true,    
-    matchBrackets: true,    
+    lineWrapping: true,
+    matchBrackets: true,
     extraKeys: {
-      "Tab": function(cm:any){
-        cm.replaceSelection("    " , "end");
-      }
-     }
-
+      Tab: function (cm: any) {
+        cm.replaceSelection('    ', 'end');
+      },
+    },
   };
 
   ngOnInit(): void {
@@ -98,21 +97,23 @@ Int getMax(Int n1, Int n2):
 
   onCompile() {
     let tree = ast(this.content);
-    let visitorTable = new SymTableGlobalVisitor();
-    visitorTable.visit(tree);
-    let symT = new SymTableVisitor().setGlobal(tree.table);
-    tree.accept(symT);
-    let exprs = new ExpressionsVisitor().setGlobal(tree.table);
-    tree.accept(exprs);
-    if (
-      (tree as Program).main !== null &&
-      visitorTable.correct &&
-      symT.correct &&
-      exprs.correct
-    ) {
-      let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
-      executeVisitor.visit(tree);      
+    if (tree.correct) {
+      let visitorTable = new SymTableGlobalVisitor();
+      visitorTable.visit(tree);
+      let symT = new SymTableVisitor().setGlobal(tree.table);
+      tree.accept(symT);
+      let exprs = new ExpressionsVisitor().setGlobal(tree.table);
+      tree.accept(exprs);
+      if (
+        (tree as Program).main !== null &&
+        visitorTable.correct &&
+        symT.correct &&
+        exprs.correct
+      ) {
+        let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
+        executeVisitor.visit(tree);
+      }
+      console.log(tree);
     }
-    console.log(tree);
   }
 }

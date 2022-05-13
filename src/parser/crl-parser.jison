@@ -83,6 +83,7 @@ comment                 {multilineComment}|{inlineComment}
                                 }
                                 if ( !this.indents.length ) {
                                     console.log( "Error de tabulación" )
+                                    return 'INVALID';
                                 }
                             } else {
                                 this.begin( 'INLINE' )
@@ -139,7 +140,8 @@ comment                 {multilineComment}|{inlineComment}
                         %}
 
 <INLINE>.               %{
-                            console.log( "Caracter inesperado" + yytext)
+                            console.log( "Caracter inesperado" + yytext);
+                            return 'INVALID';
                         %}
 
 /lex
@@ -160,8 +162,10 @@ initialState
 
 file_input    
     : file_input0 EOF
-    {         
-        $$ = new yy.Program(@$, $1);
+    {    
+        let program = new yy.Program(@$, $1);
+        program.correct = yy.correct;             
+        $$ = program;
     }
     ; 
 
@@ -178,14 +182,14 @@ header_stmt
       incert_opt
       {          
           $$ = $1.concat($2);
-      }
+      }      
     ;
 
 imports_opt
     : 
     {$$ = []}
     | imports
-    {$$ = $1}    
+    {$$ = $1}  
     ;
 
 imports
@@ -195,7 +199,7 @@ imports
     {
         $1.push($2);
         $$ = $1;
-    }
+    }    
     ;
 
 import
@@ -209,7 +213,7 @@ incert_opt
     : 
     {$$ = []}
     | incert
-    {$$ = [$1]}
+    {$$ = [$1]}    
     ;
 
 incert
@@ -246,6 +250,10 @@ input_stmt0
             $1.push($2)
         }        
         $$ = $1;
+    }    
+    | error global_stmt
+    {
+      $$ = [];
     }
     ;
 
@@ -323,7 +331,7 @@ method_declarator
     | 'Void' 'Principal' '(' params_list_opt ')' ':' block
     {
         $$ = new yy.functionMain(@$, $7);
-    } 
+    }         
     ;
 
 params_list_opt
@@ -378,6 +386,10 @@ body_block
         }                
         $$ = $1;
     }
+    | error body_stmt
+    {$$ = [];}
+    | error NEWLINE
+    {$$ = [];}
     ;
 
 body_stmt
