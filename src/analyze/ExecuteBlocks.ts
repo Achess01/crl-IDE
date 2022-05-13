@@ -30,38 +30,44 @@ export class returnTypes {
   }
 }
 
-export function runIf(if_stmt: IfStmt, global: SymTable): returnTypes {  
-  if(if_stmt.table.upperAmbit){
-    let visitor = new ExecuteVisitor(if_stmt.table.upperAmbit).setGlobal(global);
+export function runIf(if_stmt: IfStmt, global: SymTable): returnTypes {
+  if (if_stmt.table.upperAmbit) {
+    let visitor = new ExecuteVisitor(if_stmt.table.upperAmbit).setGlobal(
+      global
+    );
     if_stmt.test.accept(visitor, null);
   }
-    
-  if (if_stmt.test.value) {        
+
+  if (if_stmt.test.value) {
     let returned = runBlock(if_stmt.table, if_stmt.consequent, global);
     if (returned.isReturned) return returned;
-  } else {        
+  } else {
     let returned = runBlock(if_stmt.tableAlternate, if_stmt.alternate, global);
     if (returned.isReturned) return returned;
   }
   return new returnTypes(false);
 }
 
-export function runFor(for_stmt: forStmt, global: SymTable): returnTypes {  
+export function runFor(for_stmt: forStmt, global: SymTable): returnTypes {
   let visitor = new ExecuteVisitor(for_stmt.table).setGlobal(global);
   for_stmt.init.accept(visitor, null);
   for_stmt.test.accept(visitor, null);
-  while(for_stmt.test.value){
-    let returned = runBlock(for_stmt.table, for_stmt.body, global);    
-    if(returned.isReturned){
-      if(returned.isBreak) break;
-      if(!returned.isContinue) return returned;      
+  while (for_stmt.test.value) {
+    let returned = runBlock(for_stmt.table, for_stmt.body, global);
+    if (returned.isReturned) {
+      if (returned.isBreak) break;
+      if (!returned.isContinue) return returned;
     }
-    let name= for_stmt.init.id.name;
+    let name = for_stmt.init.id.name;
     let iterator = for_stmt.table.getVariable(name);
-    if(iterator){
-      switch(for_stmt.update){
-        case '++': iterator.value = iterator.value + 1; break;
-        case '--': iterator.value = iterator.value - 1; break;
+    if (iterator) {
+      switch (for_stmt.update) {
+        case '++':
+          iterator.value = iterator.value + 1;
+          break;
+        case '--':
+          iterator.value = iterator.value - 1;
+          break;
       }
     }
     for_stmt.test.accept(visitor, null);
@@ -72,13 +78,13 @@ export function runFor(for_stmt: forStmt, global: SymTable): returnTypes {
 export function runWhile(while_stmt: whileStmt, global: SymTable): returnTypes {
   let visitor = new ExecuteVisitor(while_stmt.table).setGlobal(global);
   while_stmt.test.accept(visitor, null);
-  while(while_stmt.test.value){
+  while (while_stmt.test.value) {
     let returned = runBlock(while_stmt.table, while_stmt.body, global);
     while_stmt.test.accept(visitor, null);
-    if(returned.isReturned){
-      if(returned.isBreak) break;
-      if(!returned.isContinue) return returned;      
-    }    
+    if (returned.isReturned) {
+      if (returned.isBreak) break;
+      if (!returned.isContinue) return returned;
+    }
   }
   return new returnTypes(false);
 }
@@ -86,16 +92,17 @@ export function runWhile(while_stmt: whileStmt, global: SymTable): returnTypes {
 export function runFunc(
   func: functionDeclaration,
   global: SymTable
-): returnTypes {    
+): returnTypes {
   let visitor = new ExecuteVisitor(func.table).setGlobal(global);
   for (const child of func.body) {
     switch (child.constructor.name) {
       case returnStmt.name:
         let rt = new returnTypes(true);
+        (child as returnStmt).argument?.accept(visitor, null);
         rt.value = (child as returnStmt).argument?.value;
         return rt;
       case IfStmt.name:
-        let if_stmt = cloneIf(child as IfStmt);        
+        let if_stmt = cloneIf(child as IfStmt);
         if_stmt.table.addUpperAmbit(func.table);
         if_stmt.tableAlternate.addUpperAmbit(func.table);
         let returnedIf = runIf(if_stmt, global);
@@ -113,8 +120,8 @@ export function runFunc(
         let returnedWhile = runWhile(while_stmt, global);
         if (returnedWhile.isReturned) return returnedWhile;
         break;
-      default:        
-        visitor.visit(child);
+      default:
+        child.accept(visitor, null);
     }
   }
   return new returnTypes(false);
@@ -130,6 +137,7 @@ export function runBlock(
     switch (child.constructor.name) {
       case returnStmt.name:
         let rt = new returnTypes(true);
+        (child as returnStmt).argument?.accept(visitor, null);
         rt.value = (child as returnStmt).argument?.value;
         return rt;
       case breakStmt.name:
@@ -141,7 +149,7 @@ export function runBlock(
         rt_continue.isContinue = true;
         return rt_continue;
       case IfStmt.name:
-        let if_stmt = cloneIf(child as IfStmt);        
+        let if_stmt = cloneIf(child as IfStmt);
         if_stmt.table.addUpperAmbit(table);
         if_stmt.tableAlternate.addUpperAmbit(table);
         let returnedIf = runIf(if_stmt, global);
@@ -158,8 +166,8 @@ export function runBlock(
         while_stmt.table.addUpperAmbit(table);
         let returnedWhile = runWhile(while_stmt, global);
         if (returnedWhile.isReturned) return returnedWhile;
-        break;        
-      default:                   
+        break;
+      default:
         child.accept(visitor, null);
     }
   }
@@ -231,7 +239,10 @@ function cloneTableIf(oldB: IfStmt, newB: IfStmt) {
   newB.table.symbolVars = newVars;
 
   /* Alternate table */
-  newB.tableAlternate = Object.assign(new SymTable('base'), oldB.tableAlternate);
+  newB.tableAlternate = Object.assign(
+    new SymTable('base'),
+    oldB.tableAlternate
+  );
   let varsAlt = newB.tableAlternate.symbolVars;
   let newVarsAlt: { [id: string]: VariableDeclarator } = {};
   for (const key in varsAlt) {

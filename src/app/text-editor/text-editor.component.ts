@@ -38,12 +38,19 @@ Char a = 'a'
 
 Void Principal():
   Int val = 100 + a
-  Mostrar("{0}", val)
+  Mostrar("{0}", factorial(5))
   Si(true):
     Mostrar("val = {0}", val - 100)
     Para(Int x = val - a; x < 102; ++):        
       Si(x % 2 == 0):
         Mostrar("Hola amigos {0}", x) 
+
+Int factorial(Int n):
+    Int num = 1
+    Mientras(n >= 1):
+      num = num * n
+      n = n -1
+    Retorno num
 
 Int getMax(String n1, Int n2):
     Boolean v = 2 == n2 

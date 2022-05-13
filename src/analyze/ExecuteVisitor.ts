@@ -45,9 +45,28 @@ class ExecuteVisitor extends Visitor {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = cloneFunction(func);        
-        let val = runFunc(nf, this.global);
-        node.returnedValue = val;
+        let nf = cloneFunction(func);    
+        let tb = nf.table;
+        let params = nf.params;
+        for(const index in node.args){
+          let name = params[index].id.name;
+          let variable = tb.getVariable(name);
+          if(variable) variable.value = node.args[index].value;
+        }
+        //let val = runFunc(nf, this.global);
+        let val = runBlock(nf.table, nf.body, this.global);
+        console.log(nf.table);
+        if(val.value === null){
+          switch(nf.type){
+            case Type.Boolean: node.returnedValue = false; break;            
+            case Type.Char: node.returnedValue = '1'; break;
+            case Type.Double: node.returnedValue = 1; break;
+            case Type.Int: node.returnedValue = 1; break;
+            case Type.String: node.returnedValue = ''; break;
+          }
+        }else{
+          node.returnedValue = val.value;
+        }
       }
     }
   }
