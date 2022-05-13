@@ -16,15 +16,12 @@ import {
   VariableDeclarator,
   whileStmt,
 } from 'src/astMembers/Node';
-import {
-  cloneFor,
-  cloneFunction,
-  cloneIf,
-  cloneWhile,
-  runBlock,
-  runFunc,
+import {  
+  cloneFunction,  
+  runBlock,  
 } from './ExecuteBlocks';
 import Visitor from './Visitor';
+import * as assign from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
   override visitProgram(node: Program): void {
@@ -44,7 +41,7 @@ class ExecuteVisitor extends Visitor {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = cloneFunction(func);
+        let nf = cloneFunction(func);                
         let tb = nf.table;
         let params = nf.params;
         for (const index in node.args) {
@@ -193,8 +190,7 @@ class ExecuteVisitor extends Visitor {
     }
   }
 
-  override visitBinaryExpression(node: BinaryExpression): void {    
-    console.log(node);
+  override visitBinaryExpression(node: BinaryExpression): void {        
     switch (node.operator) {
       case '+':
         node.value =

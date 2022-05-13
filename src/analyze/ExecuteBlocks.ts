@@ -15,6 +15,10 @@ import {
   Type,
   breakStmt,
   continueStmt,
+  Expr,
+  UnaryExpression,
+  BinaryExpression,
+  LogicalExpression,
 } from 'src/astMembers/Node';
 import { SymTable } from 'src/astMembers/SymbolTable';
 import ExecuteVisitor from './ExecuteVisitor';
@@ -89,7 +93,7 @@ export function runWhile(while_stmt: whileStmt, global: SymTable): returnTypes {
   return new returnTypes(false);
 }
 
-export function runFunc(
+/* export function runFunc(
   func: functionDeclaration,
   global: SymTable
 ): returnTypes {
@@ -126,7 +130,7 @@ export function runFunc(
   }
   return new returnTypes(false);
 }
-
+ */
 export function runBlock(
   table: SymTable,
   body: Node[],
@@ -137,8 +141,9 @@ export function runBlock(
     switch (child.constructor.name) {
       case returnStmt.name:
         let rt = new returnTypes(true);
-        (child as returnStmt).argument?.accept(visitor, null);
-        rt.value = (child as returnStmt).argument?.value;        
+        let rt_cloned = cloneReturn(child as returnStmt);
+        rt_cloned.argument?.accept(visitor, null);
+        rt.value = rt_cloned.argument?.value;
         return rt;
       case breakStmt.name:
         let rt_break = new returnTypes(true);
@@ -168,11 +173,115 @@ export function runBlock(
         if (returnedWhile.isReturned) return returnedWhile;
         break;
       default:
-        child.accept(visitor, null);
+        let clonedChild = cloneChild(child);
+        clonedChild.accept(visitor, null);
         break;
     }
   }
   return new returnTypes(false);
+}
+
+function cloneChild(node: Node): Node {
+  switch (node.constructor.name) {
+    case VariableDeclarator.name:
+      return cloneVarDec(node as VariableDeclarator);
+    case Assignment.name:
+      return cloneAssign(node as Assignment);
+    case CallFunction.name:
+      return cloneCallFunc(node as CallFunction);
+    case DibujarEXP.name:
+      return cloneDibujarEXP(node as DibujarEXP);
+    case Mostrar.name:
+      return cloneMostrar(node as Mostrar);
+  }
+
+  return node;
+}
+
+function cloneVarDec(node: VariableDeclarator): VariableDeclarator {
+  let varDec = Object.assign(new VariableDeclarator({}, node.id, null), node);
+  if (node.init) varDec.init = cloneExpr(node.init);
+  return varDec;
+}
+
+function cloneAssign(node: Assignment): Assignment {
+  let assign = Object.assign(
+    new Assignment({}, node.id, new UnaryExpression({}, null, null, false))
+  );
+  assign.expression = cloneExpr(node.expression);
+  return assign;
+}
+
+function cloneCallFunc(node: CallFunction): CallFunction {
+  let call = Object.assign(new CallFunction({}, '', []), node);
+  let expresisons: Expr[] = [];
+  for (const index in node.args) {
+    expresisons.push(cloneExpr(node.args[index]));
+  }
+  call.args = expresisons;
+  return call;
+}
+
+function cloneDibujarEXP(node: DibujarEXP): DibujarEXP {
+  let dibujar = Object.assign(
+    new DibujarEXP({}, new UnaryExpression({}, null, null, false)),
+    node
+  );
+  dibujar.expression = cloneExpr(node.expression);
+  return dibujar;
+}
+
+function cloneMostrar(node: Mostrar): Mostrar {
+  let mostrar = Object.assign(new Mostrar({}, '', []), node);
+  if (node.expressions) {
+    let expresisons: Expr[] = [];
+    for (const index in node.expressions) {
+      expresisons.push(cloneExpr(node.expressions[index]));
+    }
+    mostrar.expressions = expresisons;
+  }
+  return mostrar;
+}
+
+function cloneReturn(node: returnStmt): returnStmt {
+  let rt = Object.assign(new returnStmt({}, null), node);
+  if (node.argument) rt.argument = cloneExpr(node.argument);
+  return rt;
+}
+
+function cloneExpr(node: Expr): Expr {
+  switch (node.constructor.name) {
+    case BinaryExpression.name:
+    case LogicalExpression.name:
+      return cloneBinary(node as BinaryExpression);
+
+    case UnaryExpression.name:
+      return cloneUnary(node as UnaryExpression);
+  }
+  return node;
+}
+
+function cloneBinary(node: BinaryExpression): BinaryExpression {
+  let binary = Object.assign(
+    new BinaryExpression(
+      {},
+      null,
+      new UnaryExpression({}, null, null, false),
+      '',
+      new UnaryExpression({}, null, null, false)
+    ),
+    node
+  );
+  binary.left = cloneExpr(node.left);
+  binary.right = cloneExpr(node.right);
+  return binary;
+}
+
+function cloneUnary(node: UnaryExpression): UnaryExpression {
+  let unary = Object.assign(new UnaryExpression({}, null, null, ''), node);
+  if (node.argument.constructor.name === CallFunction.name)
+    unary.argument = cloneCallFunc(node.argument as CallFunction);
+  return unary;
 }
 
 export function cloneFunction(func: functionDeclaration): functionDeclaration {
