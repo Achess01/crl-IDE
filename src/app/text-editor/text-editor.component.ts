@@ -19,9 +19,14 @@ export class TextEditorComponent implements OnInit {
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
-    lineWrapping: true,
-    autoCloseBrackets: true,
-    matchBrackets: true,
+    lineWrapping: true,    
+    matchBrackets: true,    
+    extraKeys: {
+      "Tab": function(cm:any){
+        cm.replaceSelection("    " , "end");
+      }
+     }
+
   };
 
   ngOnInit(): void {
