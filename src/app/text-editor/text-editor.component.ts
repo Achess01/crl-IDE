@@ -97,23 +97,21 @@ Int getMax(Int n1, Int n2):
 
   onCompile() {
     let tree = ast(this.content);
-    if (tree.correct) {
-      let visitorTable = new SymTableGlobalVisitor();
-      visitorTable.visit(tree);
-      let symT = new SymTableVisitor().setGlobal(tree.table);
-      tree.accept(symT);
-      let exprs = new ExpressionsVisitor().setGlobal(tree.table);
-      tree.accept(exprs);
-      if (
-        (tree as Program).main !== null &&
-        visitorTable.correct &&
-        symT.correct &&
-        exprs.correct
-      ) {
-        let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
-        executeVisitor.visit(tree);
-      }
-      console.log(tree);
+    let visitorTable = new SymTableGlobalVisitor();
+    visitorTable.visit(tree);
+    let symT = new SymTableVisitor().setGlobal(tree.table);
+    tree.accept(symT);
+    let exprs = new ExpressionsVisitor().setGlobal(tree.table);
+    tree.accept(exprs);
+    if (
+      (tree as Program).main !== null &&
+      visitorTable.correct &&
+      symT.correct &&
+      exprs.correct
+    ) {
+      let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
+      executeVisitor.visit(tree);
     }
+    console.log(tree);
   }
 }

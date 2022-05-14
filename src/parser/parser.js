@@ -958,8 +958,7 @@ case 5:
                                     if ( last == this.indent ) break
                                 }
                                 if ( !this.indents.length ) {
-                                    console.log( "Error de tabulación" )
-                                    return 'INVALID';
+                                    yy.logLexicalError(yy_.yylloc, `Error de tabulación`);                                    
                                 }
                             } else {
                                 this.begin( 'INLINE' )
@@ -1023,9 +1022,8 @@ case 16:
                             return yy_.yytext 
                         
 break;
-case 17:
-                            console.log( "Caracter inesperado" + yy_.yytext);
-                            return 'INVALID';
+case 17:                            
+                            yy.logLexicalError(yy_.yylloc, `Caracte inesperado ${yy_.yytext}`);
                         
 break;
 }

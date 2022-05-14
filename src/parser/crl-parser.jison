@@ -82,8 +82,7 @@ comment                 {multilineComment}|{inlineComment}
                                     if ( last == this.indent ) break
                                 }
                                 if ( !this.indents.length ) {
-                                    console.log( "Error de tabulación" )
-                                    return 'INVALID';
+                                    yy.logLexicalError(yylloc, `Error de tabulación`);                                    
                                 }
                             } else {
                                 this.begin( 'INLINE' )
@@ -139,9 +138,8 @@ comment                 {multilineComment}|{inlineComment}
                             return yytext 
                         %}
 
-<INLINE>.               %{
-                            console.log( "Caracter inesperado" + yytext);
-                            return 'INVALID';
+<INLINE>.               %{                            
+                            yy.logLexicalError(yylloc, `Caracte inesperado ${yytext}`);
                         %}
 
 /lex

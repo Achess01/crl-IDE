@@ -59,17 +59,17 @@ yy.Mostrar = Mostrar;
 yy.DibujarAST = DibujarAST;
 yy.DibujarEXP = DibujarEXP;
 yy.DibujarTS = DibujarTS;
-yy.correct = true;
 
-yy.parseError = function(msg:any, hash:any){  
-  yy.correct = false;
+yy.parseError = function(msg:any, hash:any){    
   yy.logError(msg, hash);
 }
 
-yy.logError = function(msg:any, hash:any){  
+yy.logError = function(msg:any, hash:any){    
   logError(hash.loc, msg);
 }
 
-
+yy.logLexicalError = function(loc:any, info:string){  
+  logError(loc, info);
+}
     
 export default ast;
