@@ -7,11 +7,13 @@ import { TextEditorComponent } from './text-editor/text-editor.component';
 
 import { FormsModule } from '@angular/forms';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { EditorManagerComponent } from './editor-manager/editor-manager.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TextEditorComponent
+    TextEditorComponent,
+    EditorManagerComponent
   ],
   imports: [
     BrowserModule,

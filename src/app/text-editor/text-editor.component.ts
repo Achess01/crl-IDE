@@ -103,7 +103,7 @@ Int getMax(Int n1, Int n2):
   } */
 
   ngAfterViewInit() {
-    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));        
+    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));             
   }
 
   onCompile() {
@@ -137,7 +137,6 @@ Int getMax(Int n1, Int n2):
 
   caretMoved(codeMirror: any) {
     let cursor = codeMirror.getCursor();        
-    this.changeValues(cursor.line + 1, cursor.ch + 1);
-    this.onSave();
+    this.changeValues(cursor.line + 1, cursor.ch + 1);    
   }
 }
