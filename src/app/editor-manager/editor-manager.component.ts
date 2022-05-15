@@ -36,12 +36,13 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
   addBlankEditor() {
     let name = `prueba${this.counter}`;
+    let nameTab = `prueba${this.counter}-tab`;
     let target = '#' + name;
     this.counter++;
 
-    const tabItem = new TabItem(TabHeaderComponent, target, name);
+    const tabItem = new TabItem(TabHeaderComponent, target, nameTab, name);
     const tabViewContainerRef = this.tabHost.viewContainerRef;
-    const editorItem = new EditorItem(TextEditorComponent, target);
+    const editorItem = new EditorItem(TextEditorComponent, name);
     const viewContainerRef = this.editorHost.viewContainerRef;
     //viewContainerRef.clear();
     const componentRefTab = tabViewContainerRef.createComponent<TabComponent>(
@@ -57,6 +58,8 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
   closeActualEditor() {
     const viewContainerRef = this.editorHost.viewContainerRef;
+    const tabViewContainerRef = this.tabHost.viewContainerRef;
+    tabViewContainerRef.clear();
     viewContainerRef.clear();
   }
 }

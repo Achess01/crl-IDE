@@ -5,4 +5,5 @@ export interface EditorComponent{
 export interface TabComponent{
   target:string
   name:string
+  pane:string
 }

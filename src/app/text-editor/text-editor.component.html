@@ -1,11 +1,11 @@
-<div
-  class="container-sm tab-pane show active"
-  [attr.id]="id"
-  role="tabpanel"
-  aria-labelledby="code-tab"
->
+<div class="container-sm">
   <div class="row mb-2">
-    <div class="col">
+    <div
+      class="col tab-pane"
+      role="tabpanel"
+      aria-labelledby="code-tab"
+      [id]="id"
+    >
       <div class="ngx-codemirror">
         <ngx-codemirror [options]="codeMirrorOptions" [(ngModel)]="content" #cm>
         </ngx-codemirror>
@@ -14,7 +14,7 @@
   </div>
   <div class="row">
     <div class="col">
-      <div class="grid">      
+      <div class="grid">
         <span class="lead">ln: {{ line }} col: {{ column }}</span>
       </div>
     </div>

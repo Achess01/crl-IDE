@@ -9,7 +9,7 @@ import { TabComponent } from '../editor-manager/editor.component';
 export class TabHeaderComponent implements OnInit, TabComponent {
   @Input() target: any;
   @Input() name: any;
-  constructor() {}
-
+  @Input() pane: any;
+  constructor() {}  
   ngOnInit(): void {}
 }
