@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
 import SymTableVisitor from 'src/analyze/SymTableVisitor';
@@ -13,14 +13,21 @@ import { Program } from 'src/astMembers/Node';
 })
 export class TextEditorComponent implements OnInit {
   content: string;
+  line: number = 1;
+  column: number = 1;
   constructor() {
     this.content = '';
+    this.line = 1;
+    this.column = 1;
   }
+
+  @ViewChild('cm') cm: any;
+
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
     lineWrapping: true,
-    matchBrackets: true,
+    matchBrackets: true,    
     extraKeys: {
       Tab: function (cm: any) {
         cm.replaceSelection('    ', 'end');
@@ -95,6 +102,10 @@ Int getMax(Int n1, Int n2):
     console.log(this.content);
   } */
 
+  ngAfterViewInit() {
+    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));        
+  }
+
   onCompile() {
     let tree = ast(this.content);
     let visitorTable = new SymTableGlobalVisitor();
@@ -113,5 +124,19 @@ Int getMax(Int n1, Int n2):
       executeVisitor.visit(tree);
     }
     console.log(tree);
+  }
+
+  onSave() {
+    console.log(this.cm);
+  }
+
+  changeValues(line: number, column: number) {
+    this.line = line;
+    this.column = column;
+  }
+
+  caretMoved(codeMirror: any) {
+    let cursor = codeMirror.getCursor();    
+    this.changeValues(cursor.line + 1, cursor.ch + 1);
   }
 }

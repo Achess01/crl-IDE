@@ -1,15 +1,6 @@
-.textEditor{
-    width: 90%;
-    height: 100%;
-    margin: 0 auto;
-}
-
-app-text-editor{
-  width: 100%;
-  height: 100%;  
-}
-
-ngx-codemirror{
-  width: 100%;
-  height: 100%;
+.ngx-codemirror {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 6px 5px 0px 0px rgba(0, 0, 0, 0.33);
+  height: fit-content;
 }
