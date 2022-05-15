@@ -1,22 +1,24 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
 import SymTableVisitor from 'src/analyze/SymTableVisitor';
 import ExpressionsVisitor from 'src/analyze/ExpressionsVisitor';
 import ExecuteVisitor from 'src/analyze/ExecuteVisitor';
 import { Program } from 'src/astMembers/Node';
+import { EditorComponent } from '../editor-manager/editor.component';
 
 @Component({
   selector: 'app-text-editor',
   templateUrl: './text-editor.component.html',
   styleUrls: ['./text-editor.component.css'],
 })
-export class TextEditorComponent implements OnInit {
+export class  TextEditorComponent implements OnInit, EditorComponent {
+  @Input() id:any;
   content: string;
   line: number = 1;
-  column: number = 1;
+  column: number = 1;  
   constructor() {
-    this.content = '';
+    this.content = '';    
     this.line = 1;
     this.column = 1;
   }
