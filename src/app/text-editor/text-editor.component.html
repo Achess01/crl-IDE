@@ -1,11 +1,11 @@
-<div class="container-sm">
+<div
+  class="tab-pane"
+  role="tabpanel"
+  [attr.aria-labelledby]="data.label"  
+  [id]="data.id"
+>
   <div class="row mb-2">
-    <div
-      class="col tab-pane"
-      role="tabpanel"
-      aria-labelledby="code-tab"
-      [id]="id"
-    >
+    <div class="col">
       <div class="ngx-codemirror">
         <ngx-codemirror [options]="codeMirrorOptions" [(ngModel)]="content" #cm>
         </ngx-codemirror>

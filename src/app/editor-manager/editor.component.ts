@@ -1,9 +1,7 @@
 export interface EditorComponent{
-  id:string
+  data: any
 }
 
 export interface TabComponent{
-  target:string
-  name:string
-  pane:string
+  data: any
 }

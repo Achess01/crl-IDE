@@ -1,17 +1,14 @@
-<li class="nav-item d-flex" role="presentation">
-  <button
-    class="nav-link"
-    [id]="name"
-    data-bs-toggle="tab"
-    [attr.data-bs-target]="target"
-    type="button"
-    role="tab"
-    [attr.aria-controls]="pane"
-    aria-selected="false"
-  >
-    <picture
-      ><img src="assets/images/CompiReportLanguage.png" alt="logo" width="23px"
-    /></picture>
-    {{ name }}
-  </button>
-</li>
+<button
+  class="nav-link"
+  [id]="data.name"
+  data-bs-toggle="tab"
+  [attr.data-bs-target]="data.target"
+  type="button"
+  role="tab"
+  [attr.aria-controls]="data.pane"
+>
+  <picture
+    ><img src="assets/images/CompiReportLanguage.png" alt="logo" width="15px"
+  /></picture>
+  {{ data.name }}
+</button>

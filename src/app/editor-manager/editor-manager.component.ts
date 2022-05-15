@@ -1,3 +1,4 @@
+import { TemplateLiteralElement } from '@angular/compiler';
 import {
   Component,
   Input,
@@ -22,9 +23,12 @@ import { TabDirective } from './tab.directive';
 export class EditorManagerComponent implements OnInit, OnDestroy {
   @ViewChild(EditorDirective, { static: true }) editorHost!: EditorDirective;
   @ViewChild(TabDirective, { static: true }) tabHost!: TabDirective;
+  editors: EditorComponent[] = [];
+  tabs: TabComponent[] = [];
+
   counter: number;
   constructor() {
-    this.counter = 0;
+    this.counter = 97;
   }
 
   ngOnInit(): void {}
@@ -35,25 +39,50 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {}
 
   addBlankEditor() {
-    let name = `prueba${this.counter}`;
-    let nameTab = `prueba${this.counter}-tab`;
+
+    let name = `prueba${String.fromCharCode(this.counter)}`;
+    let nameTab = `${name}-tab`;
     let target = '#' + name;
     this.counter++;
 
-    const tabItem = new TabItem(TabHeaderComponent, target, nameTab, name);
+    console.log(name, nameTab, target)
+
+    const tabItem = new TabItem(TabHeaderComponent, {
+      name: nameTab,
+      target: target,
+      pane: name,
+      isActive: true,
+    });
     const tabViewContainerRef = this.tabHost.viewContainerRef;
-    const editorItem = new EditorItem(TextEditorComponent, name);
+    const editorItem = new EditorItem(TextEditorComponent, {
+      id: name,
+      label: nameTab,
+      isActive: true,
+      isShown: true      
+    });
     const viewContainerRef = this.editorHost.viewContainerRef;
     //viewContainerRef.clear();
     const componentRefTab = tabViewContainerRef.createComponent<TabComponent>(
       tabItem.component
     );
-    componentRefTab.instance.target = tabItem.target;     
-    componentRefTab.instance.name = tabItem.name;
+    componentRefTab.instance.data = tabItem.data;
+    /* this.tabs.forEach((instance) => {
+      instance.data.isActive = false;
+    });
+
+    this.tabs.push(componentRefTab.instance); */
+
     const componentRef = viewContainerRef.createComponent<EditorComponent>(
       editorItem.component
     );
-    componentRef.instance.id = editorItem.id;
+    componentRef.instance.data = editorItem.data;
+
+    /* this.editors.forEach((instance) => {
+      instance.data.isActive = false;
+      instance.data.isShown = false;
+    });
+    
+    this.editors.push(componentRef.instance); */
   }
 
   closeActualEditor() {

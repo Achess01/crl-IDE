@@ -13,10 +13,11 @@ import { EditorComponent } from '../editor-manager/editor.component';
   styleUrls: ['./text-editor.component.css'],
 })
 export class  TextEditorComponent implements OnInit, EditorComponent {
-  @Input() id:any;
+  @Input() data: any;  
   content: string;
   line: number = 1;
   column: number = 1;  
+  
   constructor() {
     this.content = '';    
     this.line = 1;
@@ -29,7 +30,7 @@ export class  TextEditorComponent implements OnInit, EditorComponent {
     theme: 'material',
     lineNumbers: true,
     lineWrapping: true,
-    matchBrackets: true,    
+    matchBrackets: true,        
     extraKeys: {
       Tab: function (cm: any) {
         cm.replaceSelection('    ', 'end');
