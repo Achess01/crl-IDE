@@ -136,7 +136,8 @@ Int getMax(Int n1, Int n2):
   }
 
   caretMoved(codeMirror: any) {
-    let cursor = codeMirror.getCursor();    
+    let cursor = codeMirror.getCursor();        
     this.changeValues(cursor.line + 1, cursor.ch + 1);
+    this.onSave();
   }
 }
