@@ -144,11 +144,11 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     let index = this.getActiveIndex();
     if(index !== -1){
       let editor = this.editors[index];      
-      let name = this.names[index];
-      let file = new Blob([editor.instance.content], { type: 'crl' });      
+      let name = this.names[index] + ".crl";
+      let file = new Blob([editor.instance.content], { type: 'text' });      
       let a = document.createElement('a'),
         url = URL.createObjectURL(file);
-      a.href = url;
+      a.href = url;      
       a.download = name;
       document.body.appendChild(a);
       a.click();
