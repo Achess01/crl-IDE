@@ -1,14 +1,15 @@
 <button
-  class="nav-link"
+  class="nav-link"  
   [id]="data.name"
   data-bs-toggle="tab"
   [attr.data-bs-target]="data.target"
   type="button"
   role="tab"
   [attr.aria-controls]="data.pane"
+  aria-selected="true"
 >
   <picture
     ><img src="assets/images/CompiReportLanguage.png" alt="logo" width="15px"
   /></picture>
-  {{ data.name }}
+  {{ data.pane }}.crl
 </button>

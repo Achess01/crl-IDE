@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
 import SymTableVisitor from 'src/analyze/SymTableVisitor';
@@ -13,9 +7,9 @@ import ExecuteVisitor from 'src/analyze/ExecuteVisitor';
 import { Program } from 'src/astMembers/Node';
 import { EditorComponent } from '../editor-manager/editor.component';
 
+
 @Component({
-  selector:
-    'text-editor',   
+  selector: '.tab-pane[role=tabpanel]',
   templateUrl: './text-editor.component.html',
   styleUrls: ['./text-editor.component.css'],
 })
@@ -26,7 +20,7 @@ export class TextEditorComponent implements OnInit, EditorComponent {
   column: number = 1;
 
   constructor() {
-    this.content = '';
+    this.content = '!!Inicio del archivo';
     this.line = 1;
     this.column = 1;
   }
@@ -38,6 +32,7 @@ export class TextEditorComponent implements OnInit, EditorComponent {
     lineNumbers: true,
     lineWrapping: true,
     matchBrackets: true,
+    autofocus: true,
     extraKeys: {
       Tab: function (cm: any) {
         cm.replaceSelection('    ', 'end');
@@ -46,7 +41,8 @@ export class TextEditorComponent implements OnInit, EditorComponent {
   };
 
   ngOnInit(): void {
-    this.content = `Importar hola.crl
+    this.content = this.data.initialContent;
+    /*     this.content = `Importar hola.crl
 Importar segundo1.crl 
 Importar segundo2.crl     
 Importar segundo3.crl 
@@ -104,7 +100,7 @@ Int getMax(Int n1, Int n2):
     Sino:
         Retorno n2    
     Int entero0, entero, entero2 = 3234, entero3 = 234 + 34 +98 + 1000 * 2
-    `;
+    `; */
   }
 
   /* setEditorContent(event: any) {
@@ -113,7 +109,7 @@ Int getMax(Int n1, Int n2):
   } */
 
   ngAfterViewInit() {
-    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));
+    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));    
   }
 
   onCompile() {

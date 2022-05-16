@@ -5,7 +5,7 @@
     <ng-template tabHost></ng-template>
   </ul>
   <div class="tab-content" id="myTabContent">
-    <ng-template editorHost></ng-template>    
+    <ng-template editorHost></ng-template>
   </div>
 
   <div class="container-sm mt-2">
@@ -24,15 +24,23 @@
       </div>
       <div class="col">
         <button
-          (click)="addBlankEditor()"
+          (click)="getName()"
           type="button"
           class="btn btn-outline-success me-1"
         >
           Nuevo
         </button>
-        <button type="button" class="btn btn-outline-success me-1">
-          Cargar
+        <button
+          (click)="readFile()"
+          type="button"
+          class="btn btn-outline-success me-1"
+        >
+          Leer
         </button>
+        <div class="mb-3">
+          <label for="formFile" class="form-label">Elegir</label>
+          <input (change)="uploadFile($event)"  class="form-control" type="file" id="formFile" accept=".crl">
+        </div>
       </div>
       <div class="col">
         <button
@@ -45,21 +53,4 @@
       </div>
     </div>
   </div>
-</div>
-
-
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">  
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
 </div>
