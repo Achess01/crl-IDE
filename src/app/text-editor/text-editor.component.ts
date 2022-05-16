@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import SymTableGlobalVisitor from 'src/analyze/SymTableVisitorGlobal';
 import ast from 'src/parser/ast';
 import SymTableVisitor from 'src/analyze/SymTableVisitor';
@@ -8,18 +14,19 @@ import { Program } from 'src/astMembers/Node';
 import { EditorComponent } from '../editor-manager/editor.component';
 
 @Component({
-  selector: 'app-text-editor',
+  selector:
+    'text-editor',   
   templateUrl: './text-editor.component.html',
   styleUrls: ['./text-editor.component.css'],
 })
-export class  TextEditorComponent implements OnInit, EditorComponent {
-  @Input() data: any;  
+export class TextEditorComponent implements OnInit, EditorComponent {
+  @Input() data: any;
   content: string;
   line: number = 1;
-  column: number = 1;  
-  
+  column: number = 1;
+
   constructor() {
-    this.content = '';    
+    this.content = '';
     this.line = 1;
     this.column = 1;
   }
@@ -30,7 +37,7 @@ export class  TextEditorComponent implements OnInit, EditorComponent {
     theme: 'material',
     lineNumbers: true,
     lineWrapping: true,
-    matchBrackets: true,        
+    matchBrackets: true,
     extraKeys: {
       Tab: function (cm: any) {
         cm.replaceSelection('    ', 'end');
@@ -106,7 +113,7 @@ Int getMax(Int n1, Int n2):
   } */
 
   ngAfterViewInit() {
-    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));             
+    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));
   }
 
   onCompile() {
@@ -139,7 +146,7 @@ Int getMax(Int n1, Int n2):
   }
 
   caretMoved(codeMirror: any) {
-    let cursor = codeMirror.getCursor();        
-    this.changeValues(cursor.line + 1, cursor.ch + 1);    
+    let cursor = codeMirror.getCursor();
+    this.changeValues(cursor.line + 1, cursor.ch + 1);
   }
 }

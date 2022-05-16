@@ -44,17 +44,17 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     let nameTab = `${name}-tab`;
     let target = '#' + name;
     this.counter++;
-
-    console.log(name, nameTab, target)
-
+    
     const tabItem = new TabItem(TabHeaderComponent, {
       name: nameTab,
       target: target,
       pane: name,
       isActive: true,
     });
+
     const tabViewContainerRef = this.tabHost.viewContainerRef;
-    const editorItem = new EditorItem(TextEditorComponent, {
+
+    const editorItem = new EditorItem(TextEditorComponent, {      
       id: name,
       label: nameTab,
       isActive: true,
@@ -66,6 +66,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       tabItem.component
     );
     componentRefTab.instance.data = tabItem.data;
+    console.log(componentRefTab.hostView);
     /* this.tabs.forEach((instance) => {
       instance.data.isActive = false;
     });
@@ -75,7 +76,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     const componentRef = viewContainerRef.createComponent<EditorComponent>(
       editorItem.component
     );
-    componentRef.instance.data = editorItem.data;
+    componentRef.instance.data = editorItem.data;    
 
     /* this.editors.forEach((instance) => {
       instance.data.isActive = false;
