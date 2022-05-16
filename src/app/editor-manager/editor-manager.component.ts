@@ -54,7 +54,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       }
 
       let analyzer = new Analyzer(main, files);
-
+      analyzer.run();
     }
   }
 
@@ -130,6 +130,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   uploadFile(event: any) {
     if (event.target.files.length > 0) {
       this.fileToUpload = event.target.files[0] as File;
+      console.log(this.fileToUpload);
     }
   }
 
@@ -137,23 +138,21 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     if (this.fileToUpload) {
       let file = this.fileToUpload;
       let name = file.name.replace('.crl', '');
+
       if (!this.isRepeatedName(name)) {
         let reader = new FileReader();
-
-        reader.addEventListener(
-          'load',
-          () => {
-            this.actualCode = reader.result;
-          },
-          false
-        );
+        const freader = () => {
+          this.actualCode = reader.result as string;
+        };
+        reader.addEventListener('load', freader, false);
 
         reader.onerror = function (evt) {};
         reader.readAsText(file, 'UTF-8');
-
         if (this.actualCode) {
-          this.addBlankEditor(name, this.actualCode);
+          reader.removeEventListener('load', freader);
+          this.addBlankEditor(name, this.actualCode);          
           this.actualCode = null;
+          this.fileToUpload = null;
         }
       } else {
         alert('Nombre repetido');
