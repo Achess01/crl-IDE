@@ -25,7 +25,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   tabs: ComponentRef<TabComponent>[] = [];
   names: string[] = [];
   fileToUpload: any = null;
-  actualCode:any = null;
+  actualCode: any = null;
   constructor() {}
 
   ngOnInit(): void {}
@@ -73,9 +73,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   }
 
   closeActualEditor() {
-    let index = this.editors.findIndex((editorRef) => {
-      return editorRef.location.nativeElement.classList.contains('active');
-    });
+    let index = this.getActiveIndex();
 
     if (index !== -1 && confirm('¿Cerrar la pestaña?')) {
       this.names.splice(index, 1);
@@ -116,29 +114,55 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     if (this.fileToUpload) {
       let file = this.fileToUpload;
       let name = file.name.replace('.crl', '');
-      if (!this.isRepeatedName(name)) {        
+      if (!this.isRepeatedName(name)) {
         let reader = new FileReader();
 
         reader.addEventListener(
           'load',
           () => {
-            this.actualCode = reader.result;            
+            this.actualCode = reader.result;
           },
           false
         );
 
         reader.onerror = function (evt) {};
         reader.readAsText(file, 'UTF-8');
-        
-        if (this.actualCode){
+
+        if (this.actualCode) {
           this.addBlankEditor(name, this.actualCode);
           this.actualCode = null;
-        } 
+        }
       } else {
         alert('Nombre repetido');
       }
     } else {
       alert('Error al leer el archivo');
     }
+  }
+
+  download() {
+    let index = this.getActiveIndex();
+    if(index !== -1){
+      let editor = this.editors[index];      
+      let name = this.names[index];
+      let file = new Blob([editor.instance.content], { type: 'crl' });      
+      let a = document.createElement('a'),
+        url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 0);
+    }
+  }
+
+  getActiveIndex(){
+    let index = this.editors.findIndex((editorRef) => {
+      return editorRef.location.nativeElement.classList.contains('active');
+    });
+    return index;
   }
 }
