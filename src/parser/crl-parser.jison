@@ -516,7 +516,7 @@ drawAST_stmt
 
 drawEXP_stmt
     : 'DibujarEXP' '(' expression ')'
-    {$$ = new yy.DibujarEXP($3);}
+    {$$ = new yy.DibujarEXP(@$,$3);}
     ;
 
 drawTS_stmt

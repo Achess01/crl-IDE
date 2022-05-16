@@ -267,7 +267,7 @@ case 83:
 this.$ = new yy.DibujarAST(this._$, $$[$0-1]);
 break;
 case 84:
-this.$ = new yy.DibujarEXP($$[$0-1]);
+this.$ = new yy.DibujarEXP(this._$,$$[$0-1]);
 break;
 case 85:
 this.$ = new yy.DibujarTS(this._$);
