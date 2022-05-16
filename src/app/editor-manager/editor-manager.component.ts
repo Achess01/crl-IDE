@@ -12,6 +12,7 @@ import { EditorComponent, TabComponent } from './editor.component';
 import { EditorDirective } from './editor.directive';
 import { TabItem } from './tab-item';
 import { TabDirective } from './tab.directive';
+import CRLFile from 'src/analyze/CRLFile';
 
 @Component({
   selector: 'app-editor-manager',
@@ -31,9 +32,29 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   ngOnDestroy(): void {}
-  onCompile() {}
 
   ngAfterViewInit() {}
+
+  onCompile() {
+    let index = this.getActiveIndex();
+    if (index !== -1) {
+      let files: CRLFile[] = [];
+      let main: CRLFile = new CRLFile(
+        this.names[index],
+        this.editors[index].instance.content
+      );
+
+      for (let i = 0; i < this.names.length; i++) {
+        if (i !== index) {
+          const name = this.names[index];
+          const content = this.editors[index].instance.content;
+          files.push(new CRLFile(name, content));
+        }
+      }
+
+      
+    }
+  }
 
   addBlankEditor(name: string, content: string = '!!! Inicio del archivo') {
     let nameTab = `${name}-tab`;
@@ -142,13 +163,13 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
   download() {
     let index = this.getActiveIndex();
-    if(index !== -1){
-      let editor = this.editors[index];      
-      let name = this.names[index] + ".crl";
-      let file = new Blob([editor.instance.content], { type: 'text' });      
+    if (index !== -1) {
+      let editor = this.editors[index];
+      let name = this.names[index] + '.crl';
+      let file = new Blob([editor.instance.content], { type: 'text' });
       let a = document.createElement('a'),
         url = URL.createObjectURL(file);
-      a.href = url;      
+      a.href = url;
       a.download = name;
       document.body.appendChild(a);
       a.click();
@@ -159,7 +180,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     }
   }
 
-  getActiveIndex(){
+  getActiveIndex() {
     let index = this.editors.findIndex((editorRef) => {
       return editorRef.location.nativeElement.classList.contains('active');
     });

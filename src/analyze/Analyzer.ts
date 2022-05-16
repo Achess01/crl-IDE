@@ -4,14 +4,15 @@ import ast from "src/parser/ast";
 import SymTableGlobalVisitor from "./SymTableVisitorGlobal";
 import SymTableVisitor from "./SymTableVisitor";
 import ExpressionsVisitor from "./ExpressionsVisitor";
+import CRLFile from "./CRLFile";
 
 class Analyzer {  
   crl: Program[] = [];
   main?: Program;
-  constructor(files: string[]){    
-    if(this.getASTs(files) && this.validateASTs()){
+  constructor(mainFile: CRLFile, files: CRLFile[]){    
+    /* if(this.getASTs(files) && this.validateASTs()){
       
-    } 
+    }  */
   }
 
   private compile(tree: Program){
