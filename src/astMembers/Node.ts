@@ -30,6 +30,7 @@ export class Program extends Node {
   table: SymTable;
   main: functionMain | null;
   correct:boolean = true;
+  filename:string = '';
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;

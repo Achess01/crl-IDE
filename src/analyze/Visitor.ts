@@ -31,16 +31,19 @@ abstract class Visitor {
   global: SymTable;
   ambit: SymTable;
   correct: boolean = true;
+  filename:string
 
-  constructor(ambit?: SymTable){
+  constructor(filename:string, ambit?: SymTable){
     if(ambit) this.ambit = ambit;
     else this.ambit = new SymTable('base');
     this.global = new SymTable('base');
+    this.filename = filename;
   }
 
   logError(loc: any, info:string){
     this.correct = false;
-    logError(loc, info);
+    let fileinfo = `${info}\nArchivo ${this.filename}.crl`
+    logError(loc, fileinfo);
   }
 
   setAmbit(ambit: SymTable){

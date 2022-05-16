@@ -36,7 +36,7 @@ export class returnTypes {
 
 export function runIf(if_stmt: IfStmt, global: SymTable): returnTypes {
   if (if_stmt.table.upperAmbit) {
-    let visitor = new ExecuteVisitor(if_stmt.table.upperAmbit).setGlobal(
+    let visitor = new ExecuteVisitor('',if_stmt.table.upperAmbit).setGlobal(
       global
     );
     if_stmt.test.accept(visitor, null);
@@ -53,7 +53,7 @@ export function runIf(if_stmt: IfStmt, global: SymTable): returnTypes {
 }
 
 export function runFor(for_stmt: forStmt, global: SymTable): returnTypes {
-  let visitor = new ExecuteVisitor(for_stmt.table).setGlobal(global);
+  let visitor = new ExecuteVisitor('',for_stmt.table).setGlobal(global);
   for_stmt.init.accept(visitor, null);
   for_stmt.test.accept(visitor, null);
   while (for_stmt.test.value) {
@@ -80,7 +80,7 @@ export function runFor(for_stmt: forStmt, global: SymTable): returnTypes {
 }
 
 export function runWhile(while_stmt: whileStmt, global: SymTable): returnTypes {
-  let visitor = new ExecuteVisitor(while_stmt.table).setGlobal(global);
+  let visitor = new ExecuteVisitor('',while_stmt.table).setGlobal(global);
   while_stmt.test.accept(visitor, null);
   while (while_stmt.test.value) {
     let returned = runBlock(while_stmt.table, while_stmt.body, global);
@@ -97,7 +97,7 @@ export function runWhile(while_stmt: whileStmt, global: SymTable): returnTypes {
   func: functionDeclaration,
   global: SymTable
 ): returnTypes {
-  let visitor = new ExecuteVisitor(func.table).setGlobal(global);
+  let visitor = new ExecuteVisitor('',func.table).setGlobal(global);
   for (const child of func.body) {
     switch (child.constructor.name) {
       case returnStmt.name:
@@ -136,7 +136,7 @@ export function runBlock(
   body: Node[],
   global: SymTable
 ): returnTypes {
-  let visitor = new ExecuteVisitor(table).setGlobal(global);
+  let visitor = new ExecuteVisitor('',table).setGlobal(global);
   for (const child of body) {
     switch (child.constructor.name) {
       case returnStmt.name:

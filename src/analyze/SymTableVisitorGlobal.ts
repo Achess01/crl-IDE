@@ -66,7 +66,10 @@ class SymTableGlobalVisitor extends Visitor {
     }
     /* Then adding variables and comprobing the use of undefined variables */
     for (let child of node.body) {
-      let checkUndefined = new CheckUndefinedGlobalVisitor(node.table);
+      let checkUndefined = new CheckUndefinedGlobalVisitor(
+        this.filename,
+        node.table
+      );
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
         if (!node.table.addVariable(variable)) {
@@ -103,7 +106,8 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
     if (variable === undefined) {
       this.logError(node.loc, `La variable '${node.id.name}' no existe`);
     } else {
-      if (variable.init === null && !variable.isParam) variable.init = node.expression;
+      if (variable.init === null && !variable.isParam)
+        variable.init = node.expression;
     }
     node.expression.accept(this, null);
   }

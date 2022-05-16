@@ -113,12 +113,13 @@ Int getMax(Int n1, Int n2):
   }
 
   onCompile() {
-    let tree = ast(this.content);
-    let visitorTable = new SymTableGlobalVisitor();
+    let filename = 'example'
+    let tree = ast(this.content, filename);
+    let visitorTable = new SymTableGlobalVisitor(filename);
     visitorTable.visit(tree);
-    let symT = new SymTableVisitor().setGlobal(tree.table);
+    let symT = new SymTableVisitor(filename).setGlobal(tree.table);
     tree.accept(symT);
-    let exprs = new ExpressionsVisitor().setGlobal(tree.table);
+    let exprs = new ExpressionsVisitor(filename).setGlobal(tree.table);
     tree.accept(exprs);
     if (
       (tree as Program).main !== null &&
@@ -126,7 +127,7 @@ Int getMax(Int n1, Int n2):
       symT.correct &&
       exprs.correct
     ) {
-      let executeVisitor = new ExecuteVisitor().setGlobal(tree.table);
+      let executeVisitor = new ExecuteVisitor(filename).setGlobal(tree.table);
       executeVisitor.visit(tree);
     }
     console.log(tree);

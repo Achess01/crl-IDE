@@ -36,7 +36,7 @@ doubleNumber            {integer}("."{digit}+)?
 
 //Multiline comment
 triplesquote            "'''"
-multilineComment        {triplesquote}([^(\'\'\')]|\')*{triplesquote}
+multilineComment        {triplesquote}([^(\'\'\')]|\'|\(|\))*{triplesquote}
 init_inlineComment      "!!"
 inlineComment           {init_inlineComment}[^\n]*
 comment                 {multilineComment}|{inlineComment} 
@@ -161,8 +161,7 @@ initialState
 file_input    
     : file_input0 EOF
     {    
-        let program = new yy.Program(@$, $1);
-        program.correct = yy.correct;             
+        let program = new yy.Program(@$, $1);               
         $$ = program;
     }
     ; 

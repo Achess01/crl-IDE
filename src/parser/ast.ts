@@ -29,11 +29,14 @@ import logError from 'src/errors/LogError';
 
 declare var parser:any;
 
-const ast = (code:string)=>{    
+let yy = parser.yy;
+
+const ast = (code:string, name:string)=>{    
+    yy.filename = name;  
     return parser.parse(code + "\n");
 }
 
-let yy = parser.yy;
+
 
 yy.Program = Program;
 yy.ImportDeclaration = ImportDeclaration;
@@ -65,10 +68,12 @@ yy.parseError = function(msg:any, hash:any){
 }
 
 yy.logError = function(msg:any, hash:any){    
-  logError(hash.loc, msg);
+  let info = `${msg}\nArchivo ${yy.filename}.crl`
+  logError(hash.loc, info);
 }
 
 yy.logLexicalError = function(loc:any, info:string){  
+  info = yy.filename + " " + info;
   logError(loc, info);
 }
     
