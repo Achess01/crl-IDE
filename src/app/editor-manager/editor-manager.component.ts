@@ -13,6 +13,7 @@ import { EditorDirective } from './editor.directive';
 import { TabItem } from './tab-item';
 import { TabDirective } from './tab.directive';
 import CRLFile from 'src/analyze/CRLFile';
+import Analyzer from 'src/analyze/Analyzer';
 
 @Component({
   selector: 'app-editor-manager',
@@ -52,7 +53,8 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
         }
       }
 
-      
+      let analyzer = new Analyzer(main, files);
+
     }
   }
 
