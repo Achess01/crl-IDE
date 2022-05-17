@@ -15,7 +15,7 @@ operators               "++" | "--" |
                         "+" | "-" | "*" | "/" | "%" | "^" |
                         "." | ":" | ";" | "," | "(" | ")" |
                         "==" | "!=" | "<=" | ">=" | "<" | ">" | "~" |
-                        "&&" | "||" | "!&" | "!" |
+                        "&&" | "||" | "|&" | "!" |
                         "=" 
 
 // strings
@@ -566,7 +566,7 @@ conditional_or_expression
 conditional_xor_expression
     : conditional_and_expression
     {$$ = $1;}
-    | conditional_xor_expression '!&' conditional_and_expression
+    | conditional_xor_expression '|&' conditional_and_expression
     {$$ = new yy.LogicalExpression(@$, yy.Type.Boolean, $1, $2, $3);}
     ;
 

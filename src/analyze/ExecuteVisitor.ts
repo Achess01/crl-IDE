@@ -287,7 +287,7 @@ class ExecuteVisitor extends Visitor {
           this.getValue(node.left, node.right) &&
           this.getValue(node.right, node.left);
         break;
-      case '!&':
+      case '|&':
         let val =
           this.getValue(node.left, node.right) ^
           this.getValue(node.right, node.left);
