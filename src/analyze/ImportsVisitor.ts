@@ -9,28 +9,36 @@ import Visitor from './Visitor';
 
 class ImportsVisitor extends Visitor {
   files: CRLFile[];
-  isMain:boolean;
-  constructor(files: CRLFile[], filename: string, ambit: SymTable, isMain?:boolean) {
+  isMain: boolean;
+  constructor(
+    files: CRLFile[],
+    filename: string,
+    ambit: SymTable,
+    isMain?: boolean
+  ) {
     super(filename, ambit);
     this.files = files;
-    if(isMain) this.isMain = isMain;
+    if (isMain) this.isMain = isMain;
     else this.isMain = false;
   }
 
-  override visitProgram(node: Program): void {    
+  override visitProgram(node: Program): void {
     for (const child of node.body) {
       if (child.constructor.name === ImportDeclaration.name) {
         (child as ImportDeclaration).accept(this, null);
-      }else if(child.constructor.name === functionMain.name && !this.isMain){        
-        this.logError(child.loc, `Función Principal() no esperada en ${this.filename}`);
-      }    
-      let symT = new SymTableVisitor(node.filename).setGlobal(node.table);
-      node.accept(symT, null);
-      let exprs = new ExpressionsVisitor(node.filename).setGlobal(node.table);
-      node.accept(exprs, null);
-
-      this.correct = this.correct && symT.correct && exprs.correct;
+      } else if (child.constructor.name === functionMain.name && !this.isMain) {
+        this.logError(
+          child.loc,
+          `Función Principal() no esperada en ${this.filename}`
+        );
+      }
     }
+    let symT = new SymTableVisitor(node.filename).setGlobal(node.table);
+    node.accept(symT, null);
+    let exprs = new ExpressionsVisitor(node.filename).setGlobal(node.table);
+    node.accept(exprs, null);
+
+    this.correct = this.correct && symT.correct && exprs.correct;
   }
 
   override visitImportDeclaration(node: ImportDeclaration): void {
@@ -71,9 +79,10 @@ class ImportsVisitor extends Visitor {
             programAST.table
           );
           importedVisitor.visit(programAST);
-        } catch(e:any) {
+          this.correct = this.correct && importedVisitor.correct;
+        } catch (e: any) {
           this.logError(node.loc, `Error al cargar el archivo ${name}.crl`);
-          console.error(e)
+          console.error(e);
         }
       } else {
         let variables = file.program.table.symbolVars;

@@ -47,11 +47,11 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
       for (let i = 0; i < this.names.length; i++) {
         if (i !== index) {
-          const name = this.names[index];
-          const content = this.editors[index].instance.content;
+          const name = this.names[i];
+          const content = this.editors[i].instance.content;
           files.push(new CRLFile(name, content));
         }
-      }
+      }      
 
       let analyzer = new Analyzer(main, files);
       analyzer.run();
@@ -130,7 +130,6 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   uploadFile(event: any) {
     if (event.target.files.length > 0) {
       this.fileToUpload = event.target.files[0] as File;
-      console.log(this.fileToUpload);
     }
   }
 
@@ -150,7 +149,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
         reader.readAsText(file, 'UTF-8');
         if (this.actualCode) {
           reader.removeEventListener('load', freader);
-          this.addBlankEditor(name, this.actualCode);          
+          this.addBlankEditor(name, this.actualCode);
           this.actualCode = null;
           this.fileToUpload = null;
         }
