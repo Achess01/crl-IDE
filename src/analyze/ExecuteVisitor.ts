@@ -4,25 +4,23 @@ import {
   CallFunction,
   DibujarAST,
   Expr,
-  forStmt,
   functionDeclaration,
-  functionMain,
   Identifier,
-  IfStmt,
   LogicalExpression,
   Mostrar,
   Program,
   Type,
   UnaryExpression,
   VariableDeclarator,
-  whileStmt,
 } from 'src/astMembers/Node';
+import { toDot } from 'ts-graphviz';
+import DotGeneratorVisitor from './DotGeneratorVisitor';
 import { cloneFunction, runBlock } from './ExecuteBlocks';
 import Visitor from './Visitor';
 
 class ExecuteVisitor extends Visitor {
-  dotFormats: string[] = [];
-  
+  static dotFormats: string[] = [];
+
   override visitProgram(node: Program): void {
     for (const child of node.body) {
       if (child.constructor.name === VariableDeclarator.name) {
@@ -38,18 +36,16 @@ class ExecuteVisitor extends Visitor {
 
   override visitDibujarAST(node: DibujarAST): void {
     let funcs = this.global.symbolFuncs[node.id.name];
-    for(const fn in funcs){
+    for (const fn in funcs) {
       this.generateDot(funcs[fn]);
     }
-    
   }
 
-  generateDot(func: functionDeclaration){
-    let base = `graph{node[shape=box];}`
-  }
-
-  getDotHelper(node: Node){
-
+  generateDot(func: functionDeclaration) {
+    let generator = new DotGeneratorVisitor('');
+    func.accept(generator, null);
+    let dot = toDot(generator.digraphGenerated);
+    ExecuteVisitor.dotFormats.push(dot);
   }
 
   override visitCallFunction(node: CallFunction): void {

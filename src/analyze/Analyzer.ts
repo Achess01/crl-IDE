@@ -10,15 +10,16 @@ class Analyzer {
   mainFile: CRLFile;
   files: CRLFile[];
   errors: boolean = false;
+  dots: string[] = [];
   constructor(mainFile: CRLFile, files: CRLFile[]) {
     this.mainFile = mainFile;
     this.files = files;
   }
 
   run() {
+    let dotString: string[] = [];
     try {
       let mainAST = ast(this.mainFile.content, this.mainFile.name) as Program;
-      console.log(mainAST);
       mainAST.filename = this.mainFile.name;
       let globalSymT = new SymTableGlobalVisitor(mainAST.filename);
       globalSymT.visit(mainAST);
@@ -34,15 +35,21 @@ class Analyzer {
           let executeVisitor = new ExecuteVisitor(mainAST.filename).setGlobal(
             mainAST.table
           );
+          ExecuteVisitor.dotFormats = [];
           executeVisitor.visit(mainAST);
+          return ExecuteVisitor.dotFormats;
         }
       } else {
-        logError(mainAST.loc, `No existe el método principal en ${this.mainFile.name}`);
+        logError(
+          mainAST.loc,
+          `No existe el método principal en ${this.mainFile.name}`
+        );
       }
-    } catch(e:any) {
+    } catch (e: any) {
       //logError({}, `Errores sintácticos en ${this.mainFile.name}.crl`);
       console.error(e);
     }
+    return [];
   }
 }
 
