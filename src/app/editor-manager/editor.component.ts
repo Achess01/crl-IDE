@@ -6,3 +6,7 @@ export interface EditorComponent{
 export interface TabComponent{
   data: any  
 }
+
+export interface ResultComponent{
+  data:any
+}

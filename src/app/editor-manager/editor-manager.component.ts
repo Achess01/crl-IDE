@@ -17,6 +17,7 @@ import CRLFile from 'src/analyze/CRLFile';
 import Analyzer from 'src/analyze/Analyzer';
 import { GraphvizService } from '../service/graphviz.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ResultDirective } from './result.directive';
 
 @Component({
   selector: 'app-editor-manager',
@@ -26,6 +27,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class EditorManagerComponent implements OnInit, OnDestroy {
   @ViewChild(EditorDirective, { static: true }) editorHost!: EditorDirective;
   @ViewChild(TabDirective, { static: true }) tabHost!: TabDirective;
+  @ViewChild(ResultDirective, { static: true }) resultHost!: ResultDirective;
   editors: ComponentRef<EditorComponent>[] = [];
   tabs: ComponentRef<TabComponent>[] = [];
   names: string[] = [];
@@ -73,9 +75,13 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       }
 
       let analyzer = new Analyzer(main, files);
-      let dots = analyzer.run();
-      this.d3(dots[0]);
+      let dots = analyzer.run();      
+      this.showResults(dots);
     }
+  }
+
+  showResults(dots:string[]){
+
   }
 
   addBlankEditor(name: string, content: string = '!!! Inicio del archivo') {
