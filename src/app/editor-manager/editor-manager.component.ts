@@ -3,21 +3,26 @@ import {
   ComponentRef,
   OnDestroy,
   OnInit,
-  Sanitizer,
   ViewChild,
 } from '@angular/core';
 import { TabHeaderComponent } from '../tab-header/tab-header.component';
 import { TextEditorComponent } from '../text-editor/text-editor.component';
 import { EditorItem } from './editor-item';
-import { EditorComponent, TabComponent } from './editor.component';
+import {
+  EditorComponent,
+  ResultComponent,
+  TabComponent,
+} from './editor.component';
 import { EditorDirective } from './editor.directive';
 import { TabItem } from './tab-item';
 import { TabDirective } from './tab.directive';
 import CRLFile from 'src/analyze/CRLFile';
 import Analyzer from 'src/analyze/Analyzer';
 import { GraphvizService } from '../service/graphviz.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ResultDirective } from './result.directive';
+import { ResultItem } from './result-item';
+import { ResultImgComponent } from './result.component';
 
 @Component({
   selector: 'app-editor-manager',
@@ -33,19 +38,27 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   names: string[] = [];
   fileToUpload: any = null;
   actualCode: any = null;
-  src: any;
-  constructor(private service: GraphvizService, private sanitizer: DomSanitizer) {
-    this.src = '';
-  }
+  constructor(
+    private service: GraphvizService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {}
 
-  d3(dot:string) {
+  graphvizImg(dot: string) {
+    const viewContainerRef = this.resultHost.viewContainerRef;
     this.service.getImage(dot).subscribe({
       next: (response: any) => {
-        let url = URL.createObjectURL(response);        
-        this.src = this.sanitizer.bypassSecurityTrustUrl(url);
-        console.log(this.src);
+        let url = URL.createObjectURL(response);
+        let srcImg = this.sanitizer.bypassSecurityTrustUrl(url);
+        const resultItem = new ResultItem(ResultImgComponent, {
+          src: srcImg,
+        });
+        const resultComponent =
+          viewContainerRef.createComponent<ResultComponent>(
+            resultItem.component
+          );
+        resultComponent.instance.data = resultItem.data;
       },
       error: (e) => {
         console.error(e);
@@ -75,13 +88,16 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       }
 
       let analyzer = new Analyzer(main, files);
-      let dots = analyzer.run();      
+      this.resultHost.viewContainerRef.clear();
+      let dots = analyzer.run();
       this.showResults(dots);
     }
   }
 
-  showResults(dots:string[]){
-
+  showResults(dots: string[]) {
+    dots.forEach(async (dot) => {
+      this.graphvizImg(dot);
+    });
   }
 
   addBlankEditor(name: string, content: string = '!!! Inicio del archivo') {

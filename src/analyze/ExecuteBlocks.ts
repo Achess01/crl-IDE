@@ -174,7 +174,11 @@ export function runBlock(
         break;
       default:
         let clonedChild = cloneChild(child);
-        clonedChild.accept(visitor, null);
+        if(clonedChild.constructor.name === DibujarEXP.name){
+          visitor.visit(clonedChild);
+        }else{
+          clonedChild.accept(visitor, null);
+        }        
         break;
     }
   }

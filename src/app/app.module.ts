@@ -12,6 +12,8 @@ import { TabHeaderComponent } from './tab-header/tab-header.component';
 import { EditorDirective } from './editor-manager/editor.directive';
 import { TabDirective } from './editor-manager/tab.directive';
 import { HttpClientModule } from '@angular/common/http';
+import { ResultDirective } from './editor-manager/result.directive';
+import { ResultImgComponent } from './editor-manager/result.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { HttpClientModule } from '@angular/common/http';
     TabHeaderComponent,
     EditorDirective,
     TabDirective,
+    ResultDirective,
+    ResultImgComponent
   ],
   imports: [
     BrowserModule,

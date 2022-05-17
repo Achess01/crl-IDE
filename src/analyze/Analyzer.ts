@@ -16,8 +16,7 @@ class Analyzer {
     this.files = files;
   }
 
-  run() {
-    let dotString: string[] = [];
+  run() {    
     try {
       let mainAST = ast(this.mainFile.content, this.mainFile.name) as Program;
       mainAST.filename = this.mainFile.name;

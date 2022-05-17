@@ -29,6 +29,14 @@ class DotGeneratorVisitor extends Visitor {
     this.counter++;
     for (const child of node.body) {
       if (child.nr) this.digraphGenerated.createEdge([nodeG, child.nr]);
+      else if(child.constructor.name === CallFunction.name){
+        let callee = (child as CallFunction).callee;
+        let cf = this.digraphGenerated.createNode(`node${this.counter}`, {
+          [attribute.label]: `Llamar ${callee}`,
+        });
+        this.digraphGenerated.createEdge([node.nr, cf]);
+        this.counter++;
+      }
     }
   }
 
@@ -78,12 +86,12 @@ class DotGeneratorVisitor extends Visitor {
     }
   }
 
-  override visitCallFunction(node: CallFunction): void {
+ /*  override visitCallFunction(node: CallFunction): void {
     node.nr = this.digraphGenerated.createNode(`node${this.counter}`, {
       [attribute.label]: `Llamar ${node.callee}`,
     });
     this.counter++;
-  }
+  } */
 
   override visitDibujarAST(node: DibujarAST): void {
     node.nr = this.digraphGenerated.createNode(`node${this.counter}`, {
