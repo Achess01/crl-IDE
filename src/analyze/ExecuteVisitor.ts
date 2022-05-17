@@ -3,6 +3,7 @@ import {
   BinaryExpression,
   CallFunction,
   DibujarAST,
+  DibujarEXP,
   Expr,
   functionDeclaration,
   Identifier,
@@ -14,6 +15,7 @@ import {
   VariableDeclarator,
 } from 'src/astMembers/Node';
 import { toDot } from 'ts-graphviz';
+import DotExpGeneratorVisitor from './DotExpGeneratorVisitor';
 import DotGeneratorVisitor from './DotGeneratorVisitor';
 import { cloneFunction, runBlock } from './ExecuteBlocks';
 import Visitor from './Visitor';
@@ -32,6 +34,13 @@ class ExecuteVisitor extends Visitor {
     if (node.main) {
       runBlock(node.main.table, node.main.body, this.global);
     }
+  }
+
+  override visitDibujarEXP(node: DibujarEXP): void {
+    let generatorExp = new DotExpGeneratorVisitor('');
+    node.expression.accept(generatorExp, null);
+    let dot = toDot(generatorExp.expG);
+    ExecuteVisitor.dotFormats.push(dot);
   }
 
   override visitDibujarAST(node: DibujarAST): void {

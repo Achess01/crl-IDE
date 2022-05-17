@@ -17,12 +17,14 @@ import { attribute, Digraph, digraph } from 'ts-graphviz';
 import Visitor from './Visitor';
 
 class DotGeneratorVisitor extends Visitor {
-  digraphGenerated: Digraph = digraph('func');
+  digraphGenerated: Digraph = digraph('func', {
+    [attribute.label]: 'Función',
+  });
   counter = 0;
 
   override visitfunctionDeclaration(node: functionDeclaration): void {
     const nodeG = this.digraphGenerated.createNode(`node${this.counter}`, {
-      [attribute.label]: `${node.nameForTable}`,
+      [attribute.label]: `${node.nameForTable}:${node.type}`,
     });
     this.counter++;
     for (const child of node.body) {
