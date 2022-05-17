@@ -21,7 +21,6 @@ import {
   runBlock,  
 } from './ExecuteBlocks';
 import Visitor from './Visitor';
-import * as assign from 'object-assign-deep';
 
 class ExecuteVisitor extends Visitor {
   override visitProgram(node: Program): void {
@@ -292,7 +291,7 @@ class ExecuteVisitor extends Visitor {
           this.getValue(node.left, node.right) ^
           this.getValue(node.right, node.left);
         if (val === 1) node.value = true;
-        node.value = false;
+        else node.value = false;
         break;
     }
   }

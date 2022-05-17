@@ -114,7 +114,7 @@ export class CheckUndefinedGlobalVisitor extends Visitor {
 
   override visitDibujarAST(node: DibujarAST): void {
     let name = node.id.name;
-    if (!this.ambit?.itExistsThisFunctionId(name)) {
+    if (!this.global.itExistsThisFunctionId(name)) {
       this.logError(node.loc, `No existe ninguna función '${name}'`);
     }
   }
