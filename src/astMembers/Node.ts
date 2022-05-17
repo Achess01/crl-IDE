@@ -4,6 +4,7 @@ import SymTableVisitor from 'src/analyze/SymTableVisitor';
 
 export abstract class Node {
   loc: any;
+  nr:any;
   constructor(loc: any) {
     this.loc = loc;
   }

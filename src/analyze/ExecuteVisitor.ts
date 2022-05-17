@@ -21,6 +21,8 @@ import { cloneFunction, runBlock } from './ExecuteBlocks';
 import Visitor from './Visitor';
 
 class ExecuteVisitor extends Visitor {
+  dotFormats: string[] = [];
+  
   override visitProgram(node: Program): void {
     for (const child of node.body) {
       if (child.constructor.name === VariableDeclarator.name) {
@@ -35,7 +37,19 @@ class ExecuteVisitor extends Visitor {
   }
 
   override visitDibujarAST(node: DibujarAST): void {
-    console.log(this.ambit);
+    let funcs = this.global.symbolFuncs[node.id.name];
+    for(const fn in funcs){
+      this.generateDot(funcs[fn]);
+    }
+    
+  }
+
+  generateDot(func: functionDeclaration){
+    let base = `graph{node[shape=box];}`
+  }
+
+  getDotHelper(node: Node){
+
   }
 
   override visitCallFunction(node: CallFunction): void {

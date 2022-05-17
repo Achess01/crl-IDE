@@ -39,7 +39,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   d3() {
-    this.service.getImage('digraph{a->b; a -> c; c -> b}').subscribe({
+    this.service.getImage('digraph{label = "hola(Int): Int"; a->b; a -> c; c -> b}').subscribe({
       next: (response: any) => {
         let url = URL.createObjectURL(response);        
         this.src = this.sanitizer.bypassSecurityTrustUrl(url);
