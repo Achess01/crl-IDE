@@ -5,11 +5,14 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class GraphvizService {
-  private url: string = 'https://quickchart.io/graphviz?graph=';
+  private url: string = 'https://quickchart.io/graphviz?graph';
 
   constructor(private http: HttpClient) { }
 
   getImage(dot: string) {
-    return this.http.get(`${this.url}${dot}`, { responseType: 'blob' });
+    let body = {
+      graph: dot      
+    }
+    return this.http.post(this.url,body ,{ responseType: 'blob' });
   }
 }
