@@ -11,8 +11,7 @@ class DotExpGeneratorVisitor extends Visitor {
   expG: Digraph = digraph({ [attribute.label]: 'Expresion' });
   counter = 0;
 
-  override visitBinaryExpression(node: BinaryExpression): void {
-    console.log(node);
+  override visitBinaryExpression(node: BinaryExpression): void {    
     let oplabel;
     switch (node.operator) {
       case '+':
