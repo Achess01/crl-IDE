@@ -7,7 +7,6 @@ import ExecuteVisitor from 'src/analyze/ExecuteVisitor';
 import { Program } from 'src/astMembers/Node';
 import { EditorComponent } from '../editor-manager/editor.component';
 
-
 @Component({
   selector: '.tab-pane[role=tabpanel]',
   templateUrl: './text-editor.component.html',
@@ -109,11 +108,11 @@ Int getMax(Int n1, Int n2):
   } */
 
   ngAfterViewInit() {
-    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));    
+    this.cm.cursorActivity.subscribe(this.caretMoved.bind(this));
   }
 
   onCompile() {
-    let filename = 'example'
+    let filename = 'example';
     let tree = ast(this.content, filename);
     let visitorTable = new SymTableGlobalVisitor(filename);
     visitorTable.visit(tree);
@@ -130,11 +129,6 @@ Int getMax(Int n1, Int n2):
       let executeVisitor = new ExecuteVisitor(filename).setGlobal(tree.table);
       executeVisitor.visit(tree);
     }
-    console.log(tree);
-  }
-
-  onSave() {
-    console.log(this.cm);
   }
 
   changeValues(line: number, column: number) {

@@ -56,8 +56,8 @@ class ImportsVisitor extends Visitor {
           for (const key in variables) {
             if (!this.ambit.addVariable(variables[key])) {
               this.logError(
-                {},
-                `Conflicto con la variable '${variables[key].id.name} importada de ${file.name}`
+                node.loc,
+                `Conflicto con la variable '${variables[key].id.name}' importada de ${file.name}`
               );
             }
           }
@@ -66,8 +66,8 @@ class ImportsVisitor extends Visitor {
             for (const key_type in functions[key]) {
               if (!this.ambit.addFunc(functions[key][key_type])) {
                 this.logError(
-                  {},
-                  `Conflicto con la función '${functions[key][key_type].nameForTable} importada de ${file.name}`
+                  node.loc,
+                  `Conflicto con la función '${functions[key][key_type].nameForTable}' importada de ${file.name}`
                 );
               }
             }
@@ -90,7 +90,7 @@ class ImportsVisitor extends Visitor {
         for (const key in variables) {
           if (!this.ambit.addVariable(variables[key])) {
             this.logError(
-              {},
+              node.loc,
               `Conflicto con la variable '${variables[key].id.name} importada de ${file.name}`
             );
           }
@@ -100,7 +100,7 @@ class ImportsVisitor extends Visitor {
           for (const key_type in functions[key]) {
             if (!this.ambit.addFunc(functions[key][key_type])) {
               this.logError(
-                {},
+                node.loc,
                 `Conflicto con la función '${functions[key][key_type].nameForTable} importada de ${file.name}`
               );
             }

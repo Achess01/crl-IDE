@@ -2,6 +2,7 @@ import {
   Assignment,
   BinaryExpression,
   CallFunction,
+  DibujarAST,
   Expr,
   forStmt,
   functionDeclaration,
@@ -16,10 +17,7 @@ import {
   VariableDeclarator,
   whileStmt,
 } from 'src/astMembers/Node';
-import {  
-  cloneFunction,  
-  runBlock,  
-} from './ExecuteBlocks';
+import { cloneFunction, runBlock } from './ExecuteBlocks';
 import Visitor from './Visitor';
 
 class ExecuteVisitor extends Visitor {
@@ -36,24 +34,27 @@ class ExecuteVisitor extends Visitor {
     }
   }
 
+  override visitDibujarAST(node: DibujarAST): void {
+    console.log(this.ambit);
+  }
+
   override visitCallFunction(node: CallFunction): void {
     if (this.ambit) {
       let func = this.ambit.getFunction(node.getTableName(), this.global);
       if (func) {
-        let nf = cloneFunction(func);                
+        let nf = cloneFunction(func);
         let tb = nf.table;
         let params = nf.params;
         for (const index in node.args) {
           let name = params[index].id.name;
           let variable = tb.getVariable(name);
           if (variable) variable.value = node.args[index].value;
-          
         }
-                   
+
         //let val = runFunc(nf, this.global);
         let val = runBlock(nf.table, nf.body, this.global);
 
-        if (val.value === null) {          
+        if (val.value === null) {
           switch (nf.type) {
             case Type.Boolean:
               node.returnedValue = false;
@@ -160,7 +161,7 @@ class ExecuteVisitor extends Visitor {
         variable.value = this.assignmentChangeValue(
           variable.type,
           node.expression
-        );        
+        );
     }
   }
 
@@ -189,7 +190,7 @@ class ExecuteVisitor extends Visitor {
     }
   }
 
-  override visitBinaryExpression(node: BinaryExpression): void {        
+  override visitBinaryExpression(node: BinaryExpression): void {
     switch (node.operator) {
       case '+':
         node.value =
@@ -204,7 +205,7 @@ class ExecuteVisitor extends Visitor {
       case '*':
         node.value =
           this.getValue(node.left, node.right) *
-          this.getValue(node.right, node.left);          
+          this.getValue(node.right, node.left);
         break;
       case '/':
         node.value =

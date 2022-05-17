@@ -205,8 +205,7 @@ class ExpressionsVisitor extends Visitor {
       }
       if(!inCicle){
         this.logError(node.loc, `La instrucción 'Detener' debe de ir dentro de un ciclo`);
-      }
-      console.log(this.ambit);
+      }      
   }
 
   override visitcontinueStmt(node: continueStmt): void {
@@ -221,8 +220,7 @@ class ExpressionsVisitor extends Visitor {
     }
     if(!inCicle){
       this.logError(node.loc, `La instrucción 'Continuar' debe de ir dentro de un ciclo`);
-    }
-    console.log(this.ambit);
+    }    
   }
 
   override visitUnaryExpression(node: UnaryExpression): void {
