@@ -11,6 +11,7 @@ import { EditorManagerComponent } from './editor-manager/editor-manager.componen
 import { TabHeaderComponent } from './tab-header/tab-header.component';
 import { EditorDirective } from './editor-manager/editor.directive';
 import { TabDirective } from './editor-manager/tab.directive';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,13 @@ import { TabDirective } from './editor-manager/tab.directive';
     EditorDirective,
     TabDirective,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, CodemirrorModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    CodemirrorModule,
+    HttpClientModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

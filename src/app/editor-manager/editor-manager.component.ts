@@ -3,6 +3,7 @@ import {
   ComponentRef,
   OnDestroy,
   OnInit,
+  Sanitizer,
   ViewChild,
 } from '@angular/core';
 import { TabHeaderComponent } from '../tab-header/tab-header.component';
@@ -14,6 +15,8 @@ import { TabItem } from './tab-item';
 import { TabDirective } from './tab.directive';
 import CRLFile from 'src/analyze/CRLFile';
 import Analyzer from 'src/analyze/Analyzer';
+import { GraphvizService } from '../service/graphviz.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor-manager',
@@ -28,9 +31,25 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   names: string[] = [];
   fileToUpload: any = null;
   actualCode: any = null;
-  constructor() {}
+  src: any;
+  constructor(private service: GraphvizService, private sanitizer: DomSanitizer) {
+    this.src = '';
+  }
 
   ngOnInit(): void {}
+
+  d3() {
+    this.service.getImage('digraph{a->b; a -> c; c -> b}').subscribe({
+      next: (response: any) => {
+        let url = URL.createObjectURL(response);        
+        this.src = this.sanitizer.bypassSecurityTrustUrl(url);
+        console.log(this.src);
+      },
+      error: (e) => {
+        console.error(e);
+      },
+    });
+  }
 
   ngOnDestroy(): void {}
 
@@ -51,7 +70,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
           const content = this.editors[i].instance.content;
           files.push(new CRLFile(name, content));
         }
-      }      
+      }
 
       let analyzer = new Analyzer(main, files);
       analyzer.run();

@@ -18,7 +18,11 @@
         >
           Compilar
         </button>
-        <button type="button" class="btn btn-outline-primary me-1" (click)="download()">
+        <button
+          type="button"
+          class="btn btn-outline-primary me-1"
+          (click)="download()"
+        >
           Descargar
         </button>
       </div>
@@ -39,7 +43,13 @@
         </button>
         <div class="mb-3">
           <label for="formFile" class="form-label">Elegir</label>
-          <input (change)="uploadFile($event)"  class="form-control" type="file" id="formFile" accept=".crl">
+          <input
+            (change)="uploadFile($event)"
+            class="form-control"
+            type="file"
+            id="formFile"
+            accept=".crl"
+          />
         </div>
       </div>
       <div class="col">
@@ -54,3 +64,8 @@
     </div>
   </div>
 </div>
+
+<div id="graph" class="container-sm">
+  <img [src]="src" alt="">
+</div>
+<button (click)="d3()">Generar</button>
