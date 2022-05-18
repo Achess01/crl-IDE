@@ -8,7 +8,7 @@ import { ResultComponent } from '../editor-manager/editor.component';
       <img
         [src]="data.src"
         alt="ast"
-        class="shadow p-3 mb-3 bg-body rounded border border-bottom-0 border-success"
+        class="img-fluid shadow p-3 mb-3 bg-body rounded border border-bottom-0 border-success"
       />
       <a [href]="data.src" class="mb-5 btn btn-dark" download="graph.svg"
         >Descargar</a

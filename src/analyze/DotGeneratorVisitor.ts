@@ -29,7 +29,7 @@ class DotGeneratorVisitor extends Visitor {
     this.counter++;
     for (const child of node.body) {
       if (child.nr) this.digraphGenerated.createEdge([nodeG, child.nr]);
-      else if(child.constructor.name === CallFunction.name){
+      else if (child.constructor.name === CallFunction.name) {
         let callee = (child as CallFunction).callee;
         let cf = this.digraphGenerated.createNode(`node${this.counter}`, {
           [attribute.label]: `Llamar ${callee}`,
@@ -67,7 +67,6 @@ class DotGeneratorVisitor extends Visitor {
       [attribute.label]: 'Cuerpo',
     });
     this.counter++;
-    this.counter++;
     this.digraphGenerated.createEdge([node.nr, expr]);
     this.digraphGenerated.createEdge([node.nr, body]);
     for (const child of node.consequent) {
@@ -77,16 +76,18 @@ class DotGeneratorVisitor extends Visitor {
     if (node.alternate.length > 0) {
       let bodyAlternate = this.digraphGenerated.createNode(
         `node${this.counter}`,
-        { [attribute.label]: 'Cuerpo' }
+        { [attribute.label]: 'Cuerpo Sino' }
       );
+      this.counter++;
       for (const child of node.alternate) {
         if (child.nr)
           this.digraphGenerated.createEdge([bodyAlternate, child.nr]);
       }
+      this.digraphGenerated.createEdge([node.nr, bodyAlternate]);
     }
   }
 
- /*  override visitCallFunction(node: CallFunction): void {
+  /*  override visitCallFunction(node: CallFunction): void {
     node.nr = this.digraphGenerated.createNode(`node${this.counter}`, {
       [attribute.label]: `Llamar ${node.callee}`,
     });
@@ -133,10 +134,10 @@ class DotGeneratorVisitor extends Visitor {
       [attribute.label]: 'Para',
     });
     this.counter++;
-    let init = this.digraphGenerated.createNode(`node${this.counter}`, {
+    /* let init = this.digraphGenerated.createNode(`node${this.counter}`, {
       [attribute.label]: 'Init',
     });
-    this.counter++;
+    this.counter++; */
     let update = this.digraphGenerated.createNode(`node${this.counter}`, {
       [attribute.label]: node.update,
     });
@@ -149,9 +150,9 @@ class DotGeneratorVisitor extends Visitor {
       [attribute.label]: 'Cuerpo',
     });
     this.counter++;
-    this.digraphGenerated.createEdge([node.nr, init]);
-    this.digraphGenerated.createEdge([node.nr, update]);
+    this.digraphGenerated.createEdge([node.nr, node.init.nr]);
     this.digraphGenerated.createEdge([node.nr, expr]);
+    this.digraphGenerated.createEdge([node.nr, update]);
     this.digraphGenerated.createEdge([node.nr, body]);
     for (const child of node.body) {
       if (child.nr) this.digraphGenerated.createEdge([body, child.nr]);
@@ -171,10 +172,8 @@ class DotGeneratorVisitor extends Visitor {
       [attribute.label]: 'Cuerpo',
     });
     this.counter++;
-    this.digraphGenerated.createEdge([node.nr, expr]);
-    this.counter++;
-    this.digraphGenerated.createEdge([node.nr, body]);
-    this.counter++;
+    this.digraphGenerated.createEdge([node.nr, expr]);    
+    this.digraphGenerated.createEdge([node.nr, body]);    
     for (const child of node.body) {
       if (child.nr) this.digraphGenerated.createEdge([body, child.nr]);
     }

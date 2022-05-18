@@ -4,7 +4,7 @@ import { ResultComponent } from '../editor-manager/editor.component';
 @Component({
   selector: 'result-table',
   template: `
-    <table class="table">
+    <table class="table mb-5">
       <thead>
         <tr>
           <th scope="col">#</th>

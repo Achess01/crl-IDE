@@ -90,7 +90,7 @@ class ExecuteVisitor extends Visitor {
         //let val = runFunc(nf, this.global);
         let val = runBlock(nf.table, nf.body, this.global);
 
-        if (val.value === null) {
+        if (!val.value) {
           switch (nf.type) {
             case Type.Boolean:
               node.returnedValue = false;
