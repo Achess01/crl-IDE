@@ -91,14 +91,15 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       let analyzer = new Analyzer(main, files);
       this.resultHost.viewContainerRef.clear();
       let results = analyzer.run();
-      this.showResults(results[0]);
-      this.showTables(results[1]);
+      if(results.length > 0){
+        this.showResults(results[0]);
+        this.showTables(results[1]);
+      }
     }
   }
 
   showTables(tables: any[]) {
-    const viewContainerRef = this.resultHost.viewContainerRef;
-    console.log(tables);
+    const viewContainerRef = this.resultHost.viewContainerRef;    
     tables.forEach((info) => {      
       const resultItem = new ResultItem(TableResultComponent, info);
       const resultComponent = viewContainerRef.createComponent<ResultComponent>(
