@@ -226,7 +226,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   readFile() {
     if (this.filesToUpload.length > 0) {
       let files = this.filesToUpload;
-      console.log(files);
+      // console.log(files);
       for (const file of files) {
         let name = file.name.replace('.crl', '');
         if (!this.isRepeatedName(name)) {
