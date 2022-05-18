@@ -16,7 +16,7 @@ class Analyzer {
     this.files = files;
   }
 
-  run() {    
+  run() {
     try {
       let mainAST = ast(this.mainFile.content, this.mainFile.name) as Program;
       mainAST.filename = this.mainFile.name;
@@ -35,8 +35,9 @@ class Analyzer {
             mainAST.table
           );
           ExecuteVisitor.dotFormats = [];
+          ExecuteVisitor.tableInfo = [];
           executeVisitor.visit(mainAST);
-          return ExecuteVisitor.dotFormats;
+          return [ExecuteVisitor.dotFormats, ExecuteVisitor.tableInfo];
         }
       } else {
         logError(

@@ -23,6 +23,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ResultDirective } from './result.directive';
 import { ResultItem } from './result-item';
 import { ResultImgComponent } from './result.component';
+import { TableResultComponent } from './tableResult.component';
 
 @Component({
   selector: 'app-editor-manager',
@@ -89,9 +90,22 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
       let analyzer = new Analyzer(main, files);
       this.resultHost.viewContainerRef.clear();
-      let dots = analyzer.run();
-      this.showResults(dots);
+      let results = analyzer.run();
+      this.showResults(results[0]);
+      this.showTables(results[1]);
     }
+  }
+
+  showTables(tables: any[]) {
+    const viewContainerRef = this.resultHost.viewContainerRef;
+    console.log(tables);
+    tables.forEach((info) => {      
+      const resultItem = new ResultItem(TableResultComponent, info);
+      const resultComponent = viewContainerRef.createComponent<ResultComponent>(
+        resultItem.component
+      );
+      resultComponent.instance.data = resultItem.data;
+    });
   }
 
   showResults(dots: string[]) {

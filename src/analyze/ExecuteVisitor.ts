@@ -4,6 +4,7 @@ import {
   CallFunction,
   DibujarAST,
   DibujarEXP,
+  DibujarTS,
   Expr,
   functionDeclaration,
   Identifier,
@@ -22,6 +23,7 @@ import Visitor from './Visitor';
 
 class ExecuteVisitor extends Visitor {
   static dotFormats: string[] = [];
+  static tableInfo: any[] = [];
 
   override visitProgram(node: Program): void {
     for (const child of node.body) {
@@ -48,6 +50,21 @@ class ExecuteVisitor extends Visitor {
     for (const fn in funcs) {
       this.generateDot(funcs[fn]);
     }
+  }
+
+  override visitDibujarTS(node: DibujarTS): void {
+    let nameAmbit = this.ambit.name;
+    let upper = this.ambit.upperAmbit;
+    while (upper !== null) {
+      nameAmbit = `${upper.name}_${nameAmbit}`;
+      upper = upper.upperAmbit;
+    }
+    let arrVar = [];
+    for (const key in this.ambit.symbolVars) {
+      arrVar.push(this.ambit.symbolVars[key]);
+    }
+    let obj = { ambit: nameAmbit, variables: arrVar };
+    ExecuteVisitor.tableInfo.push(obj);
   }
 
   generateDot(func: functionDeclaration) {

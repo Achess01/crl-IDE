@@ -1,6 +1,6 @@
 function logError(loc: any, info:string){
   let message = "";
-  if(loc !== {}){
+  if(loc.first_line && loc.first_column){
     message = `Error ln:${loc.first_line} col:${loc.first_column} ${info}`;
   }else{
     message = info;

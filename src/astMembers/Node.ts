@@ -347,7 +347,7 @@ export class functionMain extends Node {
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
-    this.table = new SymTable('Main()');
+    this.table = new SymTable('Principal()');
   }
 
   accept(visitor: Visitor, ambit: SymTable | null): void {

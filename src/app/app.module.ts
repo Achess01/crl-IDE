@@ -14,6 +14,7 @@ import { TabDirective } from './editor-manager/tab.directive';
 import { HttpClientModule } from '@angular/common/http';
 import { ResultDirective } from './editor-manager/result.directive';
 import { ResultImgComponent } from './editor-manager/result.component';
+import { TableResultComponent } from './editor-manager/tableResult.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ResultImgComponent } from './editor-manager/result.component';
     EditorDirective,
     TabDirective,
     ResultDirective,
-    ResultImgComponent
+    ResultImgComponent,
+    TableResultComponent
   ],
   imports: [
     BrowserModule,
