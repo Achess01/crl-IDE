@@ -29,7 +29,7 @@ export class TextEditorComponent implements OnInit, EditorComponent {
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
-    lineWrapping: true,
+    //lineWrapping: true,
     matchBrackets: true,
     autofocus: true,
     extraKeys: {

@@ -126,6 +126,7 @@ class ExecuteVisitor extends Visitor {
       );
     }
     // console.info(formatInfo);
+    //formatInfo = formatInfo.replace('\\n', '\n');
     ExecuteVisitor.logs.push(formatInfo);
   }
 

@@ -42,7 +42,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   codeMirrorOptions: any = {
     theme: 'material',
     lineNumbers: true,
-    lineWrapping: true,
+    //lineWrapping: true,
     matchBrackets: true,
     autofocus: false,
     readOnly: true,
@@ -116,9 +116,8 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     }
   }
 
-  showLogs(logs: string[]) {
-    console.log(logs);
-    logs.forEach((l) => (this.contentLogger += l));
+  showLogs(logs: string[]) {    
+    logs.forEach((l) => (this.contentLogger += l + '\n'));
   }
   showErrorsConsole(errors: string[]) {
     errors.forEach((e) => (this.contentLogger += e + '\n'));
