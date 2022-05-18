@@ -20,7 +20,7 @@ class Analyzer {
     try {
       let mainAST = ast(this.mainFile.content, this.mainFile.name) as Program;
       mainAST.filename = this.mainFile.name;
-      let globalSymT = new SymTableGlobalVisitor(mainAST.filename);
+      let globalSymT = new SymTableGlobalVisitor(mainAST.filename).setGlobal(mainAST.table);
       globalSymT.visit(mainAST);
       if (mainAST.main) {
         let importVisitor = new ImportsVisitor(
@@ -28,7 +28,7 @@ class Analyzer {
           mainAST.filename,
           mainAST.table,
           true
-        );
+        ).setGlobal(mainAST.table);
         importVisitor.visit(mainAST);
         if (importVisitor.correct) {
           let executeVisitor = new ExecuteVisitor(mainAST.filename).setGlobal(

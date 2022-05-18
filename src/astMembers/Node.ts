@@ -4,7 +4,7 @@ import SymTableVisitor from 'src/analyze/SymTableVisitor';
 
 export abstract class Node {
   loc: any;
-  nr:any;
+  nr: any;
   constructor(loc: any) {
     this.loc = loc;
   }
@@ -30,8 +30,8 @@ export class Program extends Node {
   incerteza: number = 0.5;
   table: SymTable;
   main: functionMain | null;
-  correct:boolean = true;
-  filename:string = '';
+  correct: boolean = true;
+  filename: string = '';
   constructor(loc: any, body: Node[]) {
     super(loc);
     this.body = body;
@@ -102,6 +102,7 @@ export class VariableDeclarator extends Node {
   type: Type | null;
   value: any;
   isParam: boolean = false;
+  file: string = '';
   constructor(loc: any, id: Identifier, init: Expr | null) {
     super(loc);
     this.id = id;
@@ -297,6 +298,7 @@ export class functionDeclaration extends Node {
   body: Node[];
   table: SymTable;
   nameForTable: string;
+  file: string = '';
   constructor(
     loc: any,
     id: string,

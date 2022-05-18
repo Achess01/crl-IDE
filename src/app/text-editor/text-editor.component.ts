@@ -112,7 +112,7 @@ Int getMax(Int n1, Int n2):
   }
 
   onCompile() {
-    let filename = 'example';
+    /* let filename = 'example';
     let tree = ast(this.content, filename);
     let visitorTable = new SymTableGlobalVisitor(filename);
     visitorTable.visit(tree);
@@ -128,7 +128,7 @@ Int getMax(Int n1, Int n2):
     ) {
       let executeVisitor = new ExecuteVisitor(filename).setGlobal(tree.table);
       executeVisitor.visit(tree);
-    }
+    } */
   }
 
   changeValues(line: number, column: number) {

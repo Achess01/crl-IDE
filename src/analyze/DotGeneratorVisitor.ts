@@ -23,12 +23,12 @@ class DotGeneratorVisitor extends Visitor {
   counter = 0;
 
   override visitfunctionDeclaration(node: functionDeclaration): void {
-    const nodeG = this.digraphGenerated.createNode(`node${this.counter}`, {
+    node.nr = this.digraphGenerated.createNode(`node${this.counter}`, {
       [attribute.label]: `${node.nameForTable}:${node.type}`,
     });
     this.counter++;
     for (const child of node.body) {
-      if (child.nr) this.digraphGenerated.createEdge([nodeG, child.nr]);
+      if (child.nr) this.digraphGenerated.createEdge([node.nr, child.nr]);
       else if (child.constructor.name === CallFunction.name) {
         let callee = (child as CallFunction).callee;
         let cf = this.digraphGenerated.createNode(`node${this.counter}`, {

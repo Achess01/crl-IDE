@@ -150,8 +150,8 @@ const charErrorAssign = [Type.String, Type.Double, Type.Boolean];
 
 class ExpressionsVisitor extends Visitor {
   override visitCallFunction(node: CallFunction): void {
-    if (this.ambit) {
-      let func = this.ambit.getFunction(node.getTableName(), this.global);
+    if (this.ambit) {      
+      let func = this.ambit.getFunction(node.getTableName(), this.global);      
       if (!func) {
         this.logError(node.loc, `La función ${node.getTableName()} no existe`);
       }

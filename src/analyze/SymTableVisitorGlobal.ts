@@ -31,6 +31,7 @@ class SymTableGlobalVisitor extends Visitor {
     for (let child of node.body) {
       if (child.constructor.name === functionDeclaration.name) {
         let func = child as functionDeclaration;
+        func.file = this.filename;
         if (!node.table.addFunc(func)) {
           this.logError(
             func.loc,
@@ -72,6 +73,7 @@ class SymTableGlobalVisitor extends Visitor {
       );
       if (child.constructor.name === VariableDeclarator.name) {
         let variable = child as VariableDeclarator;
+        variable.file = this.filename;
         if (!node.table.addVariable(variable)) {
           this.logError(
             variable.id.loc,

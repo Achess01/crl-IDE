@@ -32,11 +32,11 @@ class ImportsVisitor extends Visitor {
           `Función Principal() no esperada en ${this.filename}`
         );
       }
-    }
+    }    
     let symT = new SymTableVisitor(node.filename).setGlobal(node.table);
     node.accept(symT, null);
     let exprs = new ExpressionsVisitor(node.filename).setGlobal(node.table);
-    node.accept(exprs, null);
+    node.accept(exprs, null);    
 
     this.correct = this.correct && symT.correct && exprs.correct;
   }
@@ -49,12 +49,17 @@ class ImportsVisitor extends Visitor {
         try {
           let programAST = ast(file.content, file.name) as Program;
           programAST.filename = file.name;
-          let globalSymT = new SymTableGlobalVisitor(file.name);
+          let globalSymT = new SymTableGlobalVisitor(file.name).setGlobal(
+            programAST.table
+          );
           globalSymT.visit(programAST);
           let variables = programAST.table.symbolVars;
           let functions = programAST.table.symbolFuncs;
           for (const key in variables) {
-            if (!this.ambit.addVariable(variables[key])) {
+            if (
+              variables[key].file === programAST.filename &&
+              !this.ambit.addVariable(variables[key])
+            ) {
               this.logError(
                 node.loc,
                 `Conflicto con la variable '${variables[key].id.name}' importada de ${file.name}`
@@ -64,7 +69,10 @@ class ImportsVisitor extends Visitor {
 
           for (const key in functions) {
             for (const key_type in functions[key]) {
-              if (!this.ambit.addFunc(functions[key][key_type])) {
+              if (
+                functions[key][key_type].file === programAST.filename &&
+                !this.ambit.addFunc(functions[key][key_type])
+              ) {
                 this.logError(
                   node.loc,
                   `Conflicto con la función '${functions[key][key_type].nameForTable}' importada de ${file.name}`
@@ -88,7 +96,10 @@ class ImportsVisitor extends Visitor {
         let variables = file.program.table.symbolVars;
         let functions = file.program.table.symbolFuncs;
         for (const key in variables) {
-          if (!this.ambit.addVariable(variables[key])) {
+          if (
+            variables[key].file === file.program.filename &&
+            !this.ambit.addVariable(variables[key])
+          ) {
             this.logError(
               node.loc,
               `Conflicto con la variable '${variables[key].id.name} importada de ${file.name}`
@@ -98,7 +109,10 @@ class ImportsVisitor extends Visitor {
 
         for (const key in functions) {
           for (const key_type in functions[key]) {
-            if (!this.ambit.addFunc(functions[key][key_type])) {
+            if (
+              functions[key][key_type].file === file.program.filename &&
+              !this.ambit.addFunc(functions[key][key_type])
+            ) {
               this.logError(
                 node.loc,
                 `Conflicto con la función '${functions[key][key_type].nameForTable} importada de ${file.name}`

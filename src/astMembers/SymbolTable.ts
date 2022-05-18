@@ -39,7 +39,7 @@ export class SymTable {
   }
 
   getFunction(id: string, global?: SymTable): functionDeclaration | undefined {
-    let reg = /\(.+\)/;
+    let reg = /\(.*\)/;
     let generalId = id.replace(reg, '');
     let funcs = this.symbolFuncs[generalId];
     if (funcs !== undefined && funcs[id] !== undefined) {
