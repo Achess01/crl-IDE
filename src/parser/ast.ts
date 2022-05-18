@@ -69,12 +69,12 @@ yy.parseError = function(msg:any, hash:any){
 
 yy.logError = function(msg:any, hash:any){    
   let info = `${msg}\nArchivo ${yy.filename}.crl`
-  logError(hash.loc, info);
+  logError.logError(hash.loc, info);
 }
 
 yy.logLexicalError = function(loc:any, info:string){  
   info = yy.filename + " " + info;
-  logError(loc, info);
+  logError.logError(loc, info);
 }
     
 export default ast;

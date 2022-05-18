@@ -24,6 +24,8 @@ import { ResultDirective } from './result.directive';
 import { ResultItem } from './result-item';
 import { ResultImgComponent } from './result.component';
 import { TableResultComponent } from './tableResult.component';
+import ErrorLog from 'src/errors/LogError';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-editor-manager',
@@ -34,6 +36,19 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   @ViewChild(EditorDirective, { static: true }) editorHost!: EditorDirective;
   @ViewChild(TabDirective, { static: true }) tabHost!: TabDirective;
   @ViewChild(ResultDirective, { static: true }) resultHost!: ResultDirective;
+
+  @ViewChild('logger') logger: any;
+
+  codeMirrorOptions: any = {
+    theme: 'material',
+    lineNumbers: true,
+    lineWrapping: true,
+    matchBrackets: true,
+    autofocus: false,
+    readOnly: true,
+  };
+
+  contentLogger: string = '';
   editors: ComponentRef<EditorComponent>[] = [];
   tabs: ComponentRef<TabComponent>[] = [];
   names: string[] = [];
@@ -87,20 +102,38 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
           files.push(new CRLFile(name, content));
         }
       }
-
+      ErrorLog.clear();
       let analyzer = new Analyzer(main, files);
       this.resultHost.viewContainerRef.clear();
       let results = analyzer.run();
-      if(results.length > 0){
+      if (results.length > 0 && ErrorLog.errors) {
+        this.showLogs(results[2]);
         this.showResults(results[0]);
-        this.showTables(results[1]);
+        this.showTables(results[1]);        
+      } else {
+        this.showErrorsConsole(ErrorLog.errors);
       }
     }
   }
 
+  showLogs(logs:string[]){
+    logs.forEach((l) => (this.contentLogger += l));
+  }
+  showErrorsConsole(errors: string[]) {
+    errors.forEach((e) => (this.contentLogger += e + '\n'));
+  }
+
+  clearLogger() {
+    this.contentLogger = '';
+  }
+
+  clearResults() {
+    this.resultHost.viewContainerRef.clear();
+  }
+
   showTables(tables: any[]) {
-    const viewContainerRef = this.resultHost.viewContainerRef;    
-    tables.forEach((info) => {      
+    const viewContainerRef = this.resultHost.viewContainerRef;
+    tables.forEach((info) => {
       const resultItem = new ResultItem(TableResultComponent, info);
       const resultComponent = viewContainerRef.createComponent<ResultComponent>(
         resultItem.component

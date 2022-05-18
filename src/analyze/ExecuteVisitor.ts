@@ -24,6 +24,7 @@ import Visitor from './Visitor';
 class ExecuteVisitor extends Visitor {
   static dotFormats: string[] = [];
   static tableInfo: any[] = [];
+  static logs: string[] = [];
 
   override visitProgram(node: Program): void {
     for (const child of node.body) {
@@ -124,7 +125,8 @@ class ExecuteVisitor extends Visitor {
         expresisons[parseInt(index)].value
       );
     }
-    console.info(formatInfo);
+    // console.info(formatInfo);
+    ExecuteVisitor.logs.push(formatInfo);
   }
 
   override visitVariableDeclarator(node: VariableDeclarator): void {

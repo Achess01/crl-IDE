@@ -1,7 +1,5 @@
-.ngx-codemirror {
-  border-radius: 15px;
+.ngx-codemirror {  
   overflow: hidden;
   box-shadow: 6px 5px 0px 0px rgba(0, 0, 0, 0.33);
   height: fit-content;
 }
-

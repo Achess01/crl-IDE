@@ -43,7 +43,7 @@ abstract class Visitor {
   logError(loc: any, info:string){
     this.correct = false;
     let fileinfo = `${info}\nArchivo ${this.filename}.crl`
-    logError(loc, fileinfo);
+    logError.logError(loc, fileinfo);
   }
 
   setAmbit(ambit: SymTable){

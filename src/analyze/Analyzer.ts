@@ -36,11 +36,12 @@ class Analyzer {
           );
           ExecuteVisitor.dotFormats = [];
           ExecuteVisitor.tableInfo = [];
+          ExecuteVisitor.logs = [];
           executeVisitor.visit(mainAST);
-          return [ExecuteVisitor.dotFormats, ExecuteVisitor.tableInfo];
+          return [ExecuteVisitor.dotFormats, ExecuteVisitor.tableInfo, ExecuteVisitor.logs];
         }
       } else {
-        logError(
+        logError.logError(
           mainAST.loc,
           `No existe el método principal en ${this.mainFile.name}`
         );
