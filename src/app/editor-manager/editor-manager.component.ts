@@ -109,14 +109,15 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
       if (results.length > 0 && ErrorLog.errors) {
         this.showLogs(results[2]);
         this.showResults(results[0]);
-        this.showTables(results[1]);        
+        this.showTables(results[1]);
       } else {
         this.showErrorsConsole(ErrorLog.errors);
       }
     }
   }
 
-  showLogs(logs:string[]){
+  showLogs(logs: string[]) {
+    console.log(logs);
     logs.forEach((l) => (this.contentLogger += l));
   }
   showErrorsConsole(errors: string[]) {
