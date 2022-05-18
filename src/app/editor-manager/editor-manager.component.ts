@@ -52,7 +52,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
   editors: ComponentRef<EditorComponent>[] = [];
   tabs: ComponentRef<TabComponent>[] = [];
   names: string[] = [];
-  fileToUpload: any = null;
+  filesToUpload: any[] = [];
   actualCode: any = null;
   constructor(
     private service: GraphvizService,
@@ -116,7 +116,7 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
     }
   }
 
-  showLogs(logs: string[]) {    
+  showLogs(logs: string[]) {
     logs.forEach((l) => (this.contentLogger += l + '\n'));
   }
   showErrorsConsole(errors: string[]) {
@@ -219,32 +219,34 @@ export class EditorManagerComponent implements OnInit, OnDestroy {
 
   uploadFile(event: any) {
     if (event.target.files.length > 0) {
-      this.fileToUpload = event.target.files[0] as File;
+      this.filesToUpload = event.target.files;
     }
   }
 
   readFile() {
-    if (this.fileToUpload) {
-      let file = this.fileToUpload;
-      let name = file.name.replace('.crl', '');
+    if (this.filesToUpload.length > 0) {
+      let files = this.filesToUpload;
+      console.log(files);
+      for (const file of files) {
+        let name = file.name.replace('.crl', '');
+        if (!this.isRepeatedName(name)) {
+          let reader = new FileReader();
+          const freader = () => {
+            this.actualCode = reader.result as string;
+            if (this.actualCode) {
+              reader.removeEventListener('load', freader);
+              this.addBlankEditor(name, this.actualCode);
+              this.actualCode = null;
+              this.filesToUpload = [];
+            }
+          };
+          reader.addEventListener('load', freader, false);
 
-      if (!this.isRepeatedName(name)) {
-        let reader = new FileReader();
-        const freader = () => {
-          this.actualCode = reader.result as string;
-        };
-        reader.addEventListener('load', freader, false);
-
-        reader.onerror = function (evt) {};
-        reader.readAsText(file, 'UTF-8');
-        if (this.actualCode) {
-          reader.removeEventListener('load', freader);
-          this.addBlankEditor(name, this.actualCode);
-          this.actualCode = null;
-          this.fileToUpload = null;
+          reader.onerror = function (evt) {};
+          reader.readAsText(file, 'UTF-8');
+        } else {
+          alert('Nombre repetido');
         }
-      } else {
-        alert('Nombre repetido');
       }
     } else {
       alert('Error al leer el archivo');
